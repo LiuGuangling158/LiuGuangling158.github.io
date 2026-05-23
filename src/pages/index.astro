@@ -1,0 +1,54 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PostCard from '../components/PostCard.astro';
+import { getCollection } from 'astro:content';
+import { site } from '../config/site';
+
+const allPosts = await getCollection('blog', ({ data }) => !data.draft);
+const posts = allPosts
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .slice(0, 5);
+---
+
+<BaseLayout>
+  <section class="card-kawaii p-6 sm:p-10 text-center">
+    <p class="text-4xl" aria-hidden="true">✿</p>
+    <h1 class="mt-4 text-3xl font-bold text-ink sm:text-4xl">
+      欢迎来到 {site.name}
+    </h1>
+    <p class="mx-auto mt-4 max-w-lg text-ink-muted">
+      {site.description}
+    </p>
+    <div class="mt-8 flex flex-wrap justify-center gap-3">
+      <a href="/blog/" class="btn-kawaii">阅读博客</a>
+      <a href="/about/" class="btn-kawaii">认识我</a>
+      <a href="/admin/" class="btn-kawaii">写新文章</a>
+    </div>
+  </section>
+
+  <section class="mt-12">
+    <div class="mb-6 flex items-end justify-between gap-4">
+      <h2 class="text-xl font-bold text-ink">最新文章</h2>
+      <a href="/blog/" class="text-sm text-sakura-600 hover:underline">查看全部</a>
+    </div>
+    {
+      posts.length === 0 ? (
+        <p class="card-kawaii p-6 text-center text-ink-muted">
+          还没有文章，去{' '}
+          <a href="/admin/" class="text-sakura-600 underline">
+            管理后台
+          </a>{' '}
+          或本地添加 Markdown 吧～
+        </p>
+      ) : (
+        <ul class="flex flex-col gap-5">
+          {posts.map((post) => (
+            <li>
+              <PostCard post={post} />
+            </li>
+          ))}
+        </ul>
+      )
+    }
+  </section>
+</BaseLayout>

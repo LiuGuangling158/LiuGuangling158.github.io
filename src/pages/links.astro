@@ -1,0 +1,90 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { socialLinks, friendLinks } from '../config/links';
+import { site } from '../config/site';
+
+const iconMap: Record<string, string> = {
+  github: '⌘',
+  bilibili: '▶',
+  twitter: '✦',
+  mail: '✉',
+  link: '🔗',
+};
+---
+
+<BaseLayout title={`外链 — ${site.name}`} description="常用链接与友链">
+  <header class="mb-8">
+    <h1 class="text-3xl font-bold text-ink">外链</h1>
+    <p class="mt-2 text-ink-muted">我的站点与友链，点击将在新标签页打开</p>
+  </header>
+
+  <section class="mb-10">
+    <h2 class="mb-4 text-lg font-bold text-ink">我的链接</h2>
+    <ul class="flex flex-col gap-4">
+      {
+        socialLinks.map((item) => (
+          <li>
+            <a
+              href={item.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="card-kawaii flex items-start gap-4 p-5 transition hover:-translate-y-0.5 hover:shadow-xl"
+            >
+              <span
+                class="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-sakura-100 text-xl text-sakura-600"
+                aria-hidden="true"
+              >
+                {iconMap[item.icon ?? 'link']}
+              </span>
+              <span>
+                <span class="font-bold text-ink">{item.name}</span>
+                {item.desc && (
+                  <span class="mt-1 block text-sm text-ink-muted">
+                    {item.desc}
+                  </span>
+                )}
+              </span>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  <section>
+    <h2 class="mb-4 text-lg font-bold text-ink">友链</h2>
+    <ul class="flex flex-col gap-4">
+      {
+        friendLinks.map((item) => (
+          <li>
+            <a
+              href={item.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="card-kawaii flex items-start gap-4 p-5 transition hover:-translate-y-0.5 hover:shadow-xl"
+            >
+              <span
+                class="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-sakura-100 text-xl"
+                aria-hidden="true"
+              >
+                {iconMap[item.icon ?? 'link']}
+              </span>
+              <span>
+                <span class="font-bold text-ink">{item.name}</span>
+                {item.desc && (
+                  <span class="mt-1 block text-sm text-ink-muted">
+                    {item.desc}
+                  </span>
+                )}
+              </span>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+    <p class="mt-6 text-center text-sm text-ink-muted">
+      友链可在 <code class="rounded bg-sakura-100 px-1">src/config/links.ts</code>{' '}
+      中维护
+    </p>
+  </section>
+</BaseLayout>

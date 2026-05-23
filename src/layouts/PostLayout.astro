@@ -1,0 +1,79 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import Giscus from '../components/Giscus.astro';
+import { site } from '../config/site';
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  post: CollectionEntry<'blog'>;
+}
+
+const { post } = Astro.props;
+const { title, description, pubDate, updatedDate, tags } = post.data;
+const pageTitle = `${title} — ${site.name}`;
+const formattedDate = pubDate.toLocaleDateString('zh-CN', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+});
+---
+
+<BaseLayout title={pageTitle} description={description ?? site.description}>
+  <article>
+    <header class="card-kawaii mb-8 p-6 sm:p-8">
+      <p class="text-sm text-ink-muted">{formattedDate}</p>
+      <h1 class="mt-2 text-3xl font-bold tracking-tight text-ink sm:text-4xl">
+        {title}
+      </h1>
+      {
+        description && (
+          <p class="mt-3 text-lg text-ink-muted">{description}</p>
+        )
+      }
+      {
+        tags.length > 0 && (
+          <ul class="mt-4 flex flex-wrap gap-2">
+            {tags.map((tag) => (
+              <li>
+                <a
+                  href={`/blog/?tag=${encodeURIComponent(tag)}`}
+                  class="rounded-full bg-sakura-100 px-3 py-1 text-xs font-medium text-sakura-600 hover:bg-sakura-200"
+                >
+                  #{tag}
+                </a>
+              </li>
+            ))}
+          </ul>
+        )
+      }
+      {
+        updatedDate && (
+          <p class="mt-3 text-xs text-ink-muted">
+            更新于{' '}
+            {updatedDate.toLocaleDateString('zh-CN', {
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric',
+            })}
+          </p>
+        )
+      }
+    </header>
+
+    <div class="card-kawaii prose-blog p-6 sm:p-8">
+      <slot />
+    </div>
+
+    <nav
+      class="mt-8 flex flex-wrap items-center justify-between gap-4 text-sm"
+      aria-label="文章导航"
+    >
+      <a href="/blog/" class="btn-kawaii">← 返回博客</a>
+      <a href="/admin/" class="text-ink-muted hover:text-sakura-600">
+        在线编辑
+      </a>
+    </nav>
+
+    <Giscus />
+  </article>
+</BaseLayout>

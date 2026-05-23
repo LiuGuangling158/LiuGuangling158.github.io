@@ -1,0 +1,146 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei",
+    sans-serif;
+  --color-sakura-50: #fffafc;
+  --color-sakura-100: #fff0f5;
+  --color-sakura-200: #ffe4ef;
+  --color-sakura-300: #ffc9de;
+  --color-sakura-400: #ff9ec4;
+  --color-sakura-500: #ff7eb3;
+  --color-sakura-600: #f06292;
+  --color-cream: #fffbfd;
+  --color-ink: #4a3f55;
+  --color-ink-muted: #8b7f96;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply min-h-screen bg-sakura-50 text-ink antialiased;
+  background-image: radial-gradient(
+      circle at 10% 15%,
+      rgb(255 192 203 / 0.22) 0%,
+      transparent 42%
+    ),
+    radial-gradient(
+      circle at 88% 8%,
+      rgb(230 213 255 / 0.35) 0%,
+      transparent 38%
+    ),
+    linear-gradient(180deg, var(--color-cream) 0%, var(--color-sakura-50) 100%);
+}
+
+::selection {
+  @apply bg-sakura-300/60 text-ink;
+}
+
+/* 樱花瓣装饰（纯 CSS，无额外请求） */
+.sakura-petal {
+  position: fixed;
+  width: 10px;
+  height: 10px;
+  border-radius: 50% 0 50% 50%;
+  background: linear-gradient(135deg, #ffc9de, #ff9ec4);
+  opacity: 0.35;
+  pointer-events: none;
+  z-index: 0;
+  animation: petal-fall linear infinite;
+}
+
+@keyframes petal-fall {
+  0% {
+    transform: translateY(-10vh) rotate(0deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.35;
+  }
+  100% {
+    transform: translateY(110vh) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+/* 文章内容排版 */
+.prose-blog {
+  @apply text-ink leading-relaxed;
+}
+
+.prose-blog h1,
+.prose-blog h2,
+.prose-blog h3 {
+  @apply font-bold text-ink scroll-mt-24;
+}
+
+.prose-blog h1 {
+  @apply text-3xl mt-8 mb-4;
+}
+
+.prose-blog h2 {
+  @apply text-2xl mt-8 mb-3 pb-2 border-b border-sakura-200;
+}
+
+.prose-blog h3 {
+  @apply text-xl mt-6 mb-2;
+}
+
+.prose-blog p {
+  @apply my-4;
+}
+
+.prose-blog a {
+  @apply text-sakura-600 underline decoration-sakura-300 underline-offset-2 hover:text-sakura-500;
+}
+
+.prose-blog ul,
+.prose-blog ol {
+  @apply my-4 pl-6;
+}
+
+.prose-blog ul {
+  @apply list-disc;
+}
+
+.prose-blog ol {
+  @apply list-decimal;
+}
+
+.prose-blog li {
+  @apply my-1;
+}
+
+.prose-blog blockquote {
+  @apply my-4 border-l-4 border-sakura-400 bg-sakura-100/60 px-4 py-2 rounded-r-xl text-ink-muted italic;
+}
+
+.prose-blog pre {
+  @apply my-4 overflow-x-auto rounded-2xl border border-sakura-200 bg-white/80 p-4 text-sm shadow-sm;
+}
+
+.prose-blog code {
+  @apply rounded-md bg-sakura-100 px-1.5 py-0.5 text-sm text-sakura-600;
+}
+
+.prose-blog pre code {
+  @apply bg-transparent p-0 text-inherit;
+}
+
+.prose-blog img {
+  @apply my-6 rounded-2xl border border-sakura-200 shadow-md max-w-full;
+}
+
+.prose-blog hr {
+  @apply my-8 border-sakura-200;
+}
+
+.card-kawaii {
+  @apply rounded-3xl border-2 border-white/80 bg-white/70 shadow-lg shadow-sakura-200/40 backdrop-blur-sm;
+}
+
+.btn-kawaii {
+  @apply inline-flex items-center justify-center gap-2 rounded-full border-2 border-sakura-200 bg-white/90 px-5 py-2 text-sm font-medium text-sakura-600 shadow-sm transition hover:border-sakura-400 hover:bg-sakura-50 hover:shadow-md active:scale-[0.98];
+}

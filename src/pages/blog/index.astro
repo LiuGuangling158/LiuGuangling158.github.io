@@ -1,0 +1,80 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PostCard from '../../components/PostCard.astro';
+import { getCollection } from 'astro:content';
+import { site } from '../../config/site';
+
+const tagFilter = Astro.url.searchParams.get('tag');
+
+const allPosts = await getCollection('blog', ({ data }) => !data.draft);
+let posts = allPosts.sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+);
+
+if (tagFilter) {
+  posts = posts.filter((p) => p.data.tags.includes(tagFilter));
+}
+
+const allTags = [
+  ...new Set(allPosts.flatMap((p) => p.data.tags)),
+].sort();
+---
+
+<BaseLayout
+  title={`博客 — ${site.name}`}
+  description="全部文章与标签筛选"
+>
+  <header class="mb-8">
+    <h1 class="text-3xl font-bold text-ink">博客</h1>
+    {
+      tagFilter ? (
+        <p class="mt-2 text-ink-muted">
+          标签：<span class="font-medium text-sakura-600">#{tagFilter}</span>
+          {' · '}
+          <a href="/blog/" class="text-sakura-600 hover:underline">
+            清除筛选
+          </a>
+        </p>
+      ) : (
+        <p class="mt-2 text-ink-muted">共 {posts.length} 篇文章</p>
+      )
+    }
+  </header>
+
+  {
+    allTags.length > 0 && (
+      <nav
+        class="card-kawaii mb-8 flex flex-wrap gap-2 p-4"
+        aria-label="标签"
+      >
+        {allTags.map((tag) => (
+          <a
+            href={`/blog/?tag=${encodeURIComponent(tag)}`}
+            class:list={[
+              'rounded-full px-3 py-1 text-xs font-medium transition',
+              tag === tagFilter
+                ? 'bg-sakura-400 text-white'
+                : 'bg-sakura-100 text-sakura-600 hover:bg-sakura-200',
+            ]}
+          >
+            #{tag}
+          </a>
+        ))}
+      </nav>
+    )
+  }
+
+  {
+    posts.length === 0 ? (
+      <p class="card-kawaii p-6 text-center text-ink-muted">暂无匹配文章</p>
+    ) : (
+      <ul class="flex flex-col gap-5">
+        {posts.map((post) => (
+          <li>
+            <PostCard post={post} />
+          </li>
+        ))}
+      </ul>
+    )
+  }
+</BaseLayout>

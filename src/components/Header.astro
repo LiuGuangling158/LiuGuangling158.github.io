@@ -1,0 +1,54 @@
+---
+import { site } from '../config/site';
+
+const nav = [
+  { href: '/', label: '首页' },
+  { href: '/blog/', label: '博客' },
+  { href: '/links/', label: '外链' },
+  { href: '/about/', label: '关于' },
+];
+
+const current = Astro.url.pathname;
+---
+
+<header
+  class="sticky top-0 z-50 border-b border-sakura-200/60 bg-white/75 backdrop-blur-md"
+>
+  <div
+    class="mx-auto flex max-w-3xl items-center justify-between gap-4 px-4 py-3 sm:px-6"
+  >
+    <a href="/" class="group flex items-center gap-2">
+      <span
+        class="flex h-9 w-9 items-center justify-center rounded-2xl border-2 border-sakura-200 bg-sakura-100 text-lg shadow-sm transition group-hover:scale-105"
+        aria-hidden="true">✿</span
+      >
+      <span class="font-bold text-ink group-hover:text-sakura-600"
+        >{site.name}</span
+      >
+    </a>
+    <nav class="flex flex-wrap items-center gap-1 sm:gap-2" aria-label="主导航">
+      {
+        nav.map(({ href, label }) => {
+          const active =
+            href === '/'
+              ? current === '/'
+              : current.startsWith(href);
+          return (
+            <a
+              href={href}
+              class:list={[
+                'rounded-full px-3 py-1.5 text-sm font-medium transition',
+                active
+                  ? 'bg-sakura-200 text-sakura-600'
+                  : 'text-ink-muted hover:bg-sakura-100 hover:text-sakura-600',
+              ]}
+              aria-current={active ? 'page' : undefined}
+            >
+              {label}
+            </a>
+          );
+        })
+      }
+    </nav>
+  </div>
+</header>

@@ -1,0 +1,106 @@
+---
+import { giscus } from '../config/site';
+
+const isConfigured = Boolean(giscus.repoId && giscus.categoryId);
+---
+
+<section class="mt-10" aria-label="评论区">
+  <h2 class="mb-4 text-lg font-bold text-ink">💬 评论</h2>
+
+  {
+    !giscus.enabled ? (
+      <p class="card-kawaii p-6 text-sm text-ink-muted">
+        评论功能已关闭。可在 <code>src/config/site.ts</code> 中开启。
+      </p>
+    ) : !isConfigured ? (
+      <div class="card-kawaii p-6 text-sm text-ink-muted">
+        <p class="font-medium text-ink">Giscus 尚未配置</p>
+        <ol class="mt-3 list-decimal space-y-2 pl-5">
+          <li>
+            在 GitHub 仓库开启 <strong>Discussions</strong>，并创建分类（如 Blog
+            Comments）
+          </li>
+          <li>
+            打开{' '}
+            <a
+              href="https://giscus.app/zh-CN"
+              class="text-sakura-600 underline"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              giscus.app
+            </a>{' '}
+            生成 repoId、categoryId
+          </li>
+          <li>
+            填入 <code>src/config/site.ts</code> 中的 <code>giscus</code> 配置
+          </li>
+        </ol>
+      </div>
+    ) : (
+      <div id="giscus-mount" class="card-kawaii min-h-[120px] p-4" />
+    )
+  }
+</section>
+
+{
+  giscus.enabled && isConfigured && (
+    <script
+      is:inline
+      define:vars={{
+        repo: giscus.repo,
+        repoId: giscus.repoId,
+        category: giscus.category,
+        categoryId: giscus.categoryId,
+        mapping: giscus.mapping,
+        strict: giscus.strict,
+        reactionsEnabled: giscus.reactionsEnabled,
+        emitMetadata: giscus.emitMetadata,
+        inputPosition: giscus.inputPosition,
+        theme: giscus.theme,
+        lang: giscus.lang,
+      }}
+    >
+      function loadGiscus() {
+        const mount = document.getElementById('giscus-mount');
+        if (!mount || mount.dataset.loaded) return;
+        mount.dataset.loaded = '1';
+
+        const script = document.createElement('script');
+        script.src = 'https://giscus.app/client.js';
+        script.setAttribute('data-repo', repo);
+        script.setAttribute('data-repo-id', repoId);
+        script.setAttribute('data-category', category);
+        script.setAttribute('data-category-id', categoryId);
+        script.setAttribute('data-mapping', mapping);
+        script.setAttribute('data-strict', strict);
+        script.setAttribute('data-reactions-enabled', reactionsEnabled);
+        script.setAttribute('data-emit-metadata', emitMetadata);
+        script.setAttribute('data-input-position', inputPosition);
+        script.setAttribute('data-theme', theme);
+        script.setAttribute('data-lang', lang);
+        script.crossOrigin = 'anonymous';
+        script.async = true;
+        mount.appendChild(script);
+      }
+
+      const mount = document.getElementById('giscus-mount');
+      if (!mount) return;
+
+      if ('IntersectionObserver' in window) {
+        const observer = new IntersectionObserver(
+          (entries) => {
+            if (entries.some((e) => e.isIntersecting)) {
+              loadGiscus();
+              observer.disconnect();
+            }
+          },
+          { rootMargin: '200px' }
+        );
+        observer.observe(mount);
+      } else {
+        loadGiscus();
+      }
+    </script>
+  )
+}

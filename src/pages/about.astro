@@ -1,0 +1,48 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { site } from '../config/site';
+---
+
+<BaseLayout title={`关于 — ${site.name}`} description="关于博主">
+  <article class="card-kawaii p-6 sm:p-10">
+    <div class="flex flex-col items-center text-center sm:flex-row sm:text-left sm:items-start sm:gap-8">
+      <div
+        class="flex h-24 w-24 shrink-0 items-center justify-center rounded-3xl border-2 border-sakura-200 bg-sakura-100 text-4xl shadow-inner"
+        aria-hidden="true"
+      >
+        ✿
+      </div>
+      <div>
+        <h1 class="text-3xl font-bold text-ink">关于我</h1>
+        <p class="mt-2 text-ink-muted">@{site.author}</p>
+      </div>
+    </div>
+
+    <div class="prose-blog mt-8">
+      <p>
+        这里是 <strong>{site.name}</strong>，一个部署在 GitHub Pages
+        上的个人博客。风格是清新萌系的粉白配色，用来记录学习、生活与随想。
+      </p>
+      <p>
+        你可以通过本地 Markdown 写作后推送到 GitHub，也可以使用{' '}
+        <a href="/admin/">Decap CMS 管理后台</a>{' '}
+        在浏览器里直接发布文章。
+      </p>
+      <h2>找到我</h2>
+      <ul>
+        <li>
+          GitHub：
+          <a href={site.github} target="_blank" rel="noopener noreferrer">
+            {site.github}
+          </a>
+        </li>
+        <li>
+          更多链接请见 <a href="/links/">外链页</a>
+        </li>
+      </ul>
+      <p class="text-sm text-ink-muted">
+        本页内容可在 <code>src/pages/about.astro</code> 中自由修改。
+      </p>
+    </div>
+  </article>
+</BaseLayout>
