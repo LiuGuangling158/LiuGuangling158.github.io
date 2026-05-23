@@ -1,0 +1,102 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import {
+  groupPostsByDate,
+  getPostDisplayDate,
+  isUpdatedPost,
+} from '../utils/groupPostsByDate';
+
+interface Props {
+  posts: CollectionEntry<'blog'>[];
+}
+
+const { posts } = Astro.props;
+const groups = groupPostsByDate(posts);
+
+const weekdayFmt = new Intl.DateTimeFormat('zh-CN', { weekday: 'long' });
+const monthFmt = new Intl.DateTimeFormat('zh-CN', { month: 'long' });
+---
+
+{
+  groups.length === 0 ? (
+    <p class="card-kawaii p-8 text-center text-ink-muted">
+      还没有文章，去{' '}
+      <a href="/admin/" class="text-sakura-600 underline">
+        管理后台
+      </a>{' '}
+      或本地添加 Markdown 吧～
+    </p>
+  ) : (
+    <ol class="date-timeline">
+      {groups.map((group) => {
+        const day = group.date.getDate();
+        const month = monthFmt.format(group.date);
+        const year = group.date.getFullYear();
+        const weekday = weekdayFmt.format(group.date);
+
+        return (
+          <li class="date-timeline-item">
+            <div class="date-timeline-date card-kawaii">
+              <time datetime={group.key} class="date-timeline-time">
+                <span class="date-timeline-day">{day}</span>
+                <span class="date-timeline-meta">
+                  <span>{month}</span>
+                  <span>{year}</span>
+                  <span class="date-timeline-weekday">{weekday}</span>
+                </span>
+              </time>
+              <p class="date-timeline-count">
+                {group.posts.length} 篇更新
+              </p>
+            </div>
+
+            <ul class="date-timeline-posts">
+              {group.posts.map((post) => {
+                const href = `/blog/${post.id}/`;
+                const updated = isUpdatedPost(post);
+                const displayDate = getPostDisplayDate(post);
+
+                return (
+                  <li>
+                    <a href={href} class="date-timeline-post group card-kawaii">
+                      <span
+                        class:list={[
+                          'date-timeline-badge',
+                          updated ? 'is-update' : 'is-new',
+                        ]}
+                      >
+                        {updated ? '更新' : '发布'}
+                      </span>
+                      <span class="date-timeline-post-body">
+                        <span class="date-timeline-post-title">
+                          {post.data.title}
+                        </span>
+                        {post.data.description && (
+                          <span class="date-timeline-post-desc">
+                            {post.data.description}
+                          </span>
+                        )}
+                        <time
+                          class="date-timeline-post-time"
+                          datetime={displayDate.toISOString()}
+                        >
+                          {displayDate.toLocaleTimeString('zh-CN', {
+                            hour: '2-digit',
+                            minute: '2-digit',
+                          })}
+                        </time>
+                      </span>
+                      <span class="date-timeline-arrow" aria-hidden="true">
+                        →
+                      </span>
+                    </a>
+                  </li>
+                );
+              })}
+            </ul>
+          </li>
+        );
+      })}
+    </ol>
+  )
+}

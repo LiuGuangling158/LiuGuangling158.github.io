@@ -2,6 +2,7 @@
 title: 欢迎来到流光の小屋
 description: 博客搭建完成后的第一篇示例文章
 pubDate: 2025-05-23
+updatedDate: 2025-05-23
 tags:
   - 公告
   - 随笔

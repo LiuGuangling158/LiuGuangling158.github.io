@@ -1,0 +1,104 @@
+---
+import { heroImages, heroIntervalMs } from '../config/hero';
+import { site } from '../config/site';
+---
+
+<section class="hero" id="top" aria-label="欢迎页">
+  <div class="hero-slides" aria-hidden="true">
+    {
+      heroImages.map((img, i) => (
+        <div
+          class:list={['hero-slide', { 'is-active': i === 0 }]}
+          data-slide={i}
+        >
+          <img
+            src={img.src}
+            alt=""
+            width="1920"
+            height="1080"
+            loading={i === 0 ? 'eager' : 'lazy'}
+            fetchpriority={i === 0 ? 'high' : 'low'}
+            decoding="async"
+          />
+        </div>
+      ))
+    }
+  </div>
+  <div class="hero-overlay" aria-hidden="true"></div>
+
+  <div class="hero-content">
+    <p class="hero-badge">✿ welcome</p>
+    <h1 class="hero-title">{site.name}</h1>
+    <p class="hero-desc">{site.description}</p>
+    <a href="#blog-main" class="hero-scroll" data-scroll-to-blog>
+      <span class="hero-scroll-text">下滑进入博客</span>
+      <span class="hero-scroll-icon" aria-hidden="true">↓</span>
+    </a>
+  </div>
+
+  <div class="hero-dots" role="tablist" aria-label="背景切换指示">
+    {
+      heroImages.map((img, i) => (
+        <button
+          type="button"
+          class="hero-dot"
+          data-dot={i}
+          role="tab"
+          aria-label={`切换到：${img.alt}`}
+          aria-selected={i === 0}
+        />
+      ))
+    }
+  </div>
+</section>
+
+<script define:vars={{ intervalMs: heroIntervalMs, slideCount: heroImages.length }}>
+  const slides = document.querySelectorAll('.hero-slide');
+  const dots = document.querySelectorAll('.hero-dot');
+  if (slides.length === 0) return;
+
+  let current = 0;
+  let timer;
+
+  function goTo(index) {
+    slides[current]?.classList.remove('is-active');
+    dots[current]?.setAttribute('aria-selected', 'false');
+    current = (index + slideCount) % slideCount;
+    slides[current]?.classList.add('is-active');
+    dots[current]?.setAttribute('aria-selected', 'true');
+  }
+
+  function next() {
+    goTo(current + 1);
+  }
+
+  function start() {
+    stop();
+    timer = window.setInterval(next, intervalMs);
+  }
+
+  function stop() {
+    if (timer) window.clearInterval(timer);
+  }
+
+  dots.forEach((dot) => {
+    dot.addEventListener('click', () => {
+      const i = Number(dot.getAttribute('data-dot'));
+      if (!Number.isNaN(i)) {
+        goTo(i);
+        start();
+      }
+    });
+  });
+
+  const hero = document.querySelector('.hero');
+  hero?.addEventListener('mouseenter', stop);
+  hero?.addEventListener('mouseleave', start);
+
+  document.querySelector('[data-scroll-to-blog]')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    document.getElementById('blog-main')?.scrollIntoView({ behavior: 'smooth' });
+  });
+
+  start();
+</script>

@@ -144,3 +144,149 @@ body {
 .btn-kawaii {
   @apply inline-flex items-center justify-center gap-2 rounded-full border-2 border-sakura-200 bg-white/90 px-5 py-2 text-sm font-medium text-sakura-600 shadow-sm transition hover:border-sakura-400 hover:bg-sakura-50 hover:shadow-md active:scale-[0.98];
 }
+
+/* —— 首页全屏轮播 —— */
+.home-body {
+  @apply bg-sakura-50;
+}
+
+.hero {
+  @apply relative isolate flex min-h-[100dvh] w-full flex-col items-center justify-center overflow-hidden;
+}
+
+.hero-slides {
+  @apply absolute inset-0;
+}
+
+.hero-slide {
+  @apply absolute inset-0 opacity-0 transition-opacity duration-[1.4s] ease-in-out;
+}
+
+.hero-slide.is-active {
+  @apply opacity-100;
+}
+
+.hero-slide img {
+  @apply h-full w-full object-cover object-center;
+}
+
+.hero-overlay {
+  @apply absolute inset-0 bg-gradient-to-b from-black/15 via-black/10 to-sakura-50/95;
+}
+
+.hero-content {
+  @apply relative z-10 flex max-w-2xl flex-col items-center px-6 text-center;
+}
+
+.hero-badge {
+  @apply rounded-full border border-white/40 bg-white/15 px-4 py-1 text-sm font-medium tracking-wide text-white backdrop-blur-sm;
+}
+
+.hero-title {
+  @apply mt-5 text-4xl font-bold text-white drop-shadow-md sm:text-5xl;
+}
+
+.hero-desc {
+  @apply mt-4 max-w-md text-base text-white/90 drop-shadow sm:text-lg;
+}
+
+.hero-scroll {
+  @apply mt-10 flex flex-col items-center gap-2 text-white/95 transition hover:text-white;
+}
+
+.hero-scroll-text {
+  @apply rounded-full border border-white/35 bg-white/10 px-5 py-2 text-sm font-medium backdrop-blur-sm transition hover:bg-white/20;
+}
+
+.hero-scroll-icon {
+  @apply animate-bounce text-2xl;
+}
+
+.hero-dots {
+  @apply absolute bottom-8 left-1/2 z-10 flex -translate-x-1/2 gap-2;
+}
+
+.hero-dot {
+  @apply h-2.5 w-2.5 rounded-full border border-white/50 bg-white/30 transition hover:bg-white/60;
+}
+
+.hero-dot[aria-selected='true'] {
+  @apply w-7 bg-white/90;
+}
+
+.home-blog-wrap {
+  @apply relative z-20 rounded-t-[2rem] border-t border-sakura-200/80 bg-sakura-50 shadow-[0_-12px_40px_rgba(255,158,196,0.15)];
+}
+
+/* —— 按日期分组时间线 —— */
+.date-timeline {
+  @apply flex flex-col gap-10;
+}
+
+.date-timeline-item {
+  @apply grid gap-5 sm:grid-cols-[minmax(7.5rem,9rem)_1fr] sm:gap-6;
+}
+
+.date-timeline-date {
+  @apply flex flex-col items-center justify-center p-4 text-center sm:sticky sm:top-24 sm:self-start;
+}
+
+.date-timeline-day {
+  @apply block text-4xl font-bold leading-none text-sakura-600;
+}
+
+.date-timeline-meta {
+  @apply mt-2 flex flex-col gap-0.5 text-sm text-ink-muted;
+}
+
+.date-timeline-weekday {
+  @apply text-xs text-sakura-500;
+}
+
+.date-timeline-count {
+  @apply mt-3 rounded-full bg-sakura-100 px-2.5 py-0.5 text-xs font-medium text-sakura-600;
+}
+
+.date-timeline-posts {
+  @apply flex flex-col gap-3;
+}
+
+.date-timeline-post {
+  @apply flex items-start gap-3 p-4 transition hover:-translate-y-0.5 hover:shadow-xl;
+}
+
+.date-timeline-badge {
+  @apply shrink-0 rounded-full px-2.5 py-1 text-xs font-semibold;
+}
+
+.date-timeline-badge.is-new {
+  @apply bg-sakura-100 text-sakura-600;
+}
+
+.date-timeline-badge.is-update {
+  @apply bg-violet-100 text-violet-600;
+}
+
+.date-timeline-post-body {
+  @apply flex min-w-0 flex-1 flex-col gap-1;
+}
+
+.date-timeline-post-title {
+  @apply font-bold text-ink;
+}
+
+.date-timeline-post-desc {
+  @apply line-clamp-2 text-sm text-ink-muted;
+}
+
+.date-timeline-post-time {
+  @apply text-xs text-ink-muted;
+}
+
+.date-timeline-arrow {
+  @apply shrink-0 text-sakura-400 transition group-hover:text-sakura-600;
+}
+
+.date-timeline-post:hover .date-timeline-arrow {
+  @apply translate-x-0.5 text-sakura-600;
+}

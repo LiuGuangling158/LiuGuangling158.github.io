@@ -1,9 +1,17 @@
 ---
 import { site } from '../config/site';
 
+interface Props {
+  /** 首页首屏：透明导航浮在背景图上 */
+  variant?: 'default' | 'hero';
+}
+
+const { variant = 'default' } = Astro.props;
+const isHero = variant === 'hero';
+
 const nav = [
   { href: '/', label: '首页' },
-  { href: '/blog/', label: '博客' },
+  { href: isHero ? '/#blog-main' : '/blog/', label: '博客' },
   { href: '/links/', label: '外链' },
   { href: '/about/', label: '关于' },
 ];
@@ -12,18 +20,29 @@ const current = Astro.url.pathname;
 ---
 
 <header
-  class="sticky top-0 z-50 border-b border-sakura-200/60 bg-white/75 backdrop-blur-md"
+  class:list={[
+    'top-0 z-50',
+    isHero
+      ? 'fixed inset-x-0 border-b border-white/20 bg-white/10 backdrop-blur-md'
+      : 'sticky border-b border-sakura-200/60 bg-white/75 backdrop-blur-md',
+  ]}
 >
   <div
-    class="mx-auto flex max-w-3xl items-center justify-between gap-4 px-4 py-3 sm:px-6"
+    class:list={[
+      'mx-auto flex items-center justify-between gap-4 px-4 py-3 sm:px-6',
+      isHero ? 'max-w-5xl' : 'max-w-3xl',
+    ]}
   >
     <a href="/" class="group flex items-center gap-2">
       <span
         class="flex h-9 w-9 items-center justify-center rounded-2xl border-2 border-sakura-200 bg-sakura-100 text-lg shadow-sm transition group-hover:scale-105"
         aria-hidden="true">✿</span
       >
-      <span class="font-bold text-ink group-hover:text-sakura-600"
-        >{site.name}</span
+      <span
+        class:list={[
+          'font-bold group-hover:text-sakura-600',
+          isHero ? 'text-white drop-shadow-sm' : 'text-ink',
+        ]}>{site.name}</span
       >
     </a>
     <nav class="flex flex-wrap items-center gap-1 sm:gap-2" aria-label="主导航">
@@ -39,8 +58,12 @@ const current = Astro.url.pathname;
               class:list={[
                 'rounded-full px-3 py-1.5 text-sm font-medium transition',
                 active
-                  ? 'bg-sakura-200 text-sakura-600'
-                  : 'text-ink-muted hover:bg-sakura-100 hover:text-sakura-600',
+                  ? isHero
+                    ? 'bg-white/90 text-sakura-600'
+                    : 'bg-sakura-200 text-sakura-600'
+                  : isHero
+                    ? 'text-white/90 hover:bg-white/20 hover:text-white'
+                    : 'text-ink-muted hover:bg-sakura-100 hover:text-sakura-600',
               ]}
               aria-current={active ? 'page' : undefined}
             >
