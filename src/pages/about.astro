@@ -1,17 +1,13 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import SiteAvatar from '../components/SiteAvatar.astro';
 import { site } from '../config/site';
 ---
 
 <BaseLayout title={`关于 — ${site.name}`} description="关于博主">
   <article class="card-kawaii p-6 sm:p-10">
     <div class="flex flex-col items-center text-center sm:flex-row sm:text-left sm:items-start sm:gap-8">
-      <div
-        class="flex h-24 w-24 shrink-0 items-center justify-center rounded-3xl border-2 border-sakura-200 bg-sakura-100 text-4xl shadow-inner"
-        aria-hidden="true"
-      >
-        ✿
-      </div>
+      <SiteAvatar size="lg" class="shadow-inner" />
       <div>
         <h1 class="text-3xl font-bold text-ink">关于我</h1>
         <p class="mt-2 text-ink-muted">@{site.author}</p>
@@ -41,7 +37,7 @@ import { site } from '../config/site';
         </li>
       </ul>
       <p class="text-sm text-ink-muted">
-        本页内容可在 <code>src/pages/about.astro</code> 中自由修改。
+        头像与站名在 <code>src/config/site.ts</code> 的 <code>avatar</code>、<code>name</code> 中修改；本页正文可在 <code>src/pages/about.astro</code> 中编辑。
       </p>
     </div>
   </article>

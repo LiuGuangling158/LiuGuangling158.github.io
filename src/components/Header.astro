@@ -1,5 +1,6 @@
 ---
 import { site } from '../config/site';
+import SiteAvatar from './SiteAvatar.astro';
 
 interface Props {
   /** 首页首屏：透明导航浮在背景图上 */
@@ -34,10 +35,7 @@ const current = Astro.url.pathname;
     ]}
   >
     <a href="/" class="group flex items-center gap-2">
-      <span
-        class="flex h-9 w-9 items-center justify-center rounded-2xl border-2 border-sakura-200 bg-sakura-100 text-lg shadow-sm transition group-hover:scale-105"
-        aria-hidden="true">✿</span
-      >
+      <SiteAvatar size="sm" class={isHero ? 'border-white/40' : undefined} />
       <span
         class:list={[
           'font-bold group-hover:text-sakura-600',

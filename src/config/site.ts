@@ -1,7 +1,11 @@
 export const site = {
-  name: '流光の小屋',
-  title: '流光の小屋 — 个人博客',
-  description: '清新萌系的个人博客，记录生活与技术。',
+  name: '流光靈の博客',
+  title: '流光靈の博客 — 个人博客',
+  description: '欢迎来到流光靈的个人博客，记录生活与技术',
+  /** 头像：public/avatar.jpg */
+  avatar: '/avatar.jpg',
+  /** 浏览器图标：public/favicon.png */
+  favicon: '/favicon.png',
   author: 'liuguangling158',
   url: 'https://liuguangling158.github.io',
   locale: 'zh-CN',

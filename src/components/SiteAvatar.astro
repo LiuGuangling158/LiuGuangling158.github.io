@@ -1,0 +1,44 @@
+---
+import { site } from '../config/site';
+
+interface Props {
+  size?: 'sm' | 'lg';
+  class?: string;
+}
+
+const { size = 'sm', class: className } = Astro.props;
+
+const sizeClass =
+  size === 'lg'
+    ? 'h-24 w-24 rounded-3xl text-4xl'
+    : 'h-9 w-9 rounded-2xl text-lg';
+---
+
+{
+  site.avatar ? (
+    <img
+      src={site.avatar}
+      alt={`${site.name} 头像`}
+      width={size === 'lg' ? 96 : 36}
+      height={size === 'lg' ? 96 : 36}
+      class:list={[
+        'shrink-0 border-2 border-sakura-200 object-cover shadow-sm transition group-hover:scale-105',
+        sizeClass,
+        className,
+      ]}
+      loading="lazy"
+      decoding="async"
+    />
+  ) : (
+    <span
+      class:list={[
+        'flex shrink-0 items-center justify-center border-2 border-sakura-200 bg-sakura-100 shadow-sm transition group-hover:scale-105',
+        sizeClass,
+        className,
+      ]}
+      aria-hidden="true"
+    >
+      ✿
+    </span>
+  )
+}

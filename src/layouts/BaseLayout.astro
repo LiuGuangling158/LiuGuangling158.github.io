@@ -14,7 +14,7 @@ interface Props {
 const {
   title = site.title,
   description = site.description,
-  image = '/favicon.svg',
+  image = site.favicon,
 } = Astro.props;
 
 const canonicalURL = new URL(Astro.url.pathname, site.url);
@@ -26,7 +26,7 @@ const ogImage = new URL(image, site.url);
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" href={site.favicon} />
     <link rel="canonical" href={canonicalURL} />
     <meta name="generator" content={Astro.generator} />
     <title>{title}</title>
