@@ -13,7 +13,7 @@ locale: zh-Hans
 
 slug:
   encoding: ascii
-  clean_accents: replace
+  clean_accents: true
   sanitize_replacement: '-'
 
 collections:
