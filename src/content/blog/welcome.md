@@ -11,10 +11,9 @@ draft: false
 
 你好呀，欢迎来到我的个人博客 ✿
 
-这是一篇示例文章。你可以：
+这是一篇示例文章。你可以通过以下方式更新博客：
 
-- **本地写作**：在 `src/content/blog/` 新建 `.md` 文件，填写 Frontmatter 后 `git push`
-- **网页写作**：访问站点的 [/admin/](/admin/) 使用 Decap CMS 在线编辑
+- 在 `src/content/blog/` 新建 `.md` 文件，填写 Frontmatter 后提交到 GitHub
 
 ## 支持 Markdown
 
