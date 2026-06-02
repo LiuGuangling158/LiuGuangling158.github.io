@@ -1,4 +1,4 @@
-# 流光の小屋
+# 流光靈の小屋
 
 清新萌系粉白风格的个人博客，基于 [Astro](https://astro.build)，部署至 [liuguangling158.github.io](https://liuguangling158.github.io)。
 
