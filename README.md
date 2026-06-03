@@ -20,7 +20,7 @@ npm run dev
 
 ## 发布文章
 
-### 方式一：本地 Markdown
+### 本地 Markdown（需要符合Astro格式）
 
 在 `src/content/blog/` 新建 `.md` 文件：
 
@@ -37,22 +37,6 @@ draft: false
 ```
 
 推送到 `main` 分支后，GitHub Actions 自动部署。
-
-### 方式二：Decap CMS
-
-1. 将本仓库推送到 GitHub：`liuguangling158/liuguangling158.github.io`
-2. 配置 GitHub OAuth（Decap 需要，否则无法登录后台）：
-   - 在 GitHub 创建 OAuth App：Homepage `https://liuguangling158.github.io`，Callback 使用 [Decap 文档](https://decapcms.org/docs/github-backend/) 推荐的 OAuth 服务
-   - 常见做法：使用 Netlify 提供的免费 OAuth 代理，在 `public/admin/config.yml` 增加 `base_url` 与 `auth_endpoint`
-3. 访问 https://liuguangling158.github.io/admin/
-
-本地调试 CMS：
-
-```bash
-# config.yml 中启用 local_backend: true
-npx decap-server
-npm run dev
-```
 
 ## Giscus 评论
 
