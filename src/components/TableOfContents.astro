@@ -1,0 +1,176 @@
+---
+interface Heading {
+  depth: number;
+  slug: string;
+  text: string;
+}
+
+interface Props {
+  headings: Heading[];
+}
+
+const { headings } = Astro.props;
+
+// 只保留 H1-H4，且至少要有 2 个标题才显示目录
+const tocItems = headings.filter((h) => h.depth >= 1 && h.depth <= 4);
+// H1 通常是文章标题，不需要出现在目录中
+const filtered = tocItems.filter((h) => h.depth > 1);
+
+if (filtered.length < 2) {
+  // 标题太少，不渲染目录
+}
+---
+
+{filtered.length >= 2 && (
+  <nav
+    class="toc"
+    id="table-of-contents"
+    aria-label="文章目录"
+  >
+    <!-- 移动端折叠按钮 -->
+    <button
+      class="toc-toggle"
+      id="toc-toggle"
+      aria-expanded="false"
+      aria-controls="toc-list"
+    >
+      <svg class="toc-toggle-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="3" y1="6" x2="21" y2="6" />
+        <line x1="3" y1="12" x2="21" y2="12" />
+        <line x1="3" y1="18" x2="15" y2="18" />
+      </svg>
+      <span>目录</span>
+      <svg class="toc-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="6 9 12 15 18 9" />
+      </svg>
+    </button>
+
+    <!-- 目录列表：hidden（移动端默认隐藏），lg:flex（桌面端始终展开） -->
+    <ul class="toc-list hidden lg:flex" id="toc-list">
+      <li class="toc-title-desktop">目录</li>
+      {filtered.map((h) => (
+        <li
+          class="toc-item"
+          style={`padding-left: ${(h.depth - 2) * 1.25}rem`}
+        >
+          <a
+            href={`#${h.slug}`}
+            class="toc-link"
+            data-toc-slug={h.slug}
+          >
+            {h.text}
+          </a>
+        </li>
+      ))}
+    </ul>
+  </nav>
+)}
+
+<script>
+  // TOC 交互：移动端折叠 + 滚动高亮
+  // 显隐由 Tailwind 工具类 hidden / flex / lg:flex 控制（同层，层叠正确）
+  (function () {
+    const toc = document.getElementById('table-of-contents');
+    if (!toc) return;
+
+    const toggle = document.getElementById('toc-toggle')!;
+    const list = document.getElementById('toc-list')!;
+    const links = toc.querySelectorAll<HTMLAnchorElement>('.toc-link');
+    if (!toggle || !list || links.length === 0) return;
+
+    const DESKTOP_BP = 1024;
+
+    function isDesktop() {
+      return window.matchMedia(`(min-width: ${DESKTOP_BP}px)`).matches;
+    }
+
+    function openMobile() {
+      list.classList.remove('hidden');
+      list.classList.add('flex');
+      toggle.setAttribute('aria-expanded', 'true');
+    }
+
+    function closeMobile() {
+      list.classList.add('hidden');
+      list.classList.remove('flex');
+      toggle.setAttribute('aria-expanded', 'false');
+    }
+
+    function isOpen() {
+      return !list.classList.contains('hidden');
+    }
+
+    // 移动端折叠/展开
+    toggle.addEventListener('click', () => {
+      if (isOpen()) {
+        closeMobile();
+      } else {
+        openMobile();
+      }
+    });
+
+    // 从桌面切到移动端时，重置为关闭状态
+    let wasDesktop = isDesktop();
+    window.addEventListener('resize', () => {
+      const nowDesktop = isDesktop();
+      if (wasDesktop && !nowDesktop) {
+        closeMobile();
+      }
+      wasDesktop = nowDesktop;
+    });
+
+    // 点击目录项：平滑滚动 + 移动端关闭面板
+    links.forEach((link) => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        const slug = link.dataset.tocSlug;
+        const target = document.getElementById(slug!);
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth' });
+          history.replaceState(null, '', `#${slug}`);
+          // 移动端：点击后关闭面板
+          if (!isDesktop()) {
+            closeMobile();
+          }
+        }
+      });
+    });
+
+    // Intersection Observer：滚动高亮当前章节
+    const headingEls = Array.from(links)
+      .map((link) => document.getElementById(link.dataset.tocSlug!))
+      .filter(Boolean) as HTMLElement[];
+
+    if (headingEls.length > 0) {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          let activeSlug: string | null = null;
+          for (const entry of entries) {
+            if (entry.isIntersecting) { activeSlug = entry.target.id; break; }
+          }
+          if (!activeSlug) {
+            for (let i = headingEls.length - 1; i >= 0; i--) {
+              if (headingEls[i].getBoundingClientRect().top < window.innerHeight / 3) {
+                activeSlug = headingEls[i].id; break;
+              }
+            }
+          }
+          links.forEach((link) => {
+            link.classList.toggle('toc-link-active', link.dataset.tocSlug === activeSlug);
+          });
+        },
+        { rootMargin: '-80px 0px -60% 0px', threshold: 0 },
+      );
+
+      headingEls.forEach((el) => observer.observe(el));
+    }
+
+    // 页面加载时有 URL hash → 滚动到目标位置
+    if (window.location.hash) {
+      const target = document.getElementById(window.location.hash.slice(1));
+      if (target) {
+        setTimeout(() => target.scrollIntoView({ behavior: 'smooth' }), 100);
+      }
+    }
+  })();
+</script>

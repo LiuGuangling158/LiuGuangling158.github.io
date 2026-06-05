@@ -2,9 +2,7 @@
 title: 博客写作指南：格式规范与图片插入
 description: 详细介绍如何正确编写博客文章，包括 Frontmatter 格式、常见错误处理和图片插入方法
 pubDate: 2026-05-31
-tags:
-  - 教程
-  - 博客
+category: 教程分享
 draft: false
 cover: /images/hero/hero-1.jpg
 ---
@@ -31,9 +29,10 @@ title: 文章标题                    # ✅ 必填，字符串
 description: 文章描述（可选）       # ❌ 可选，字符串
 pubDate: 2026-05-31               # ✅ 必填，日期格式 YYYY-MM-DD
 updatedDate: 2026-06-01           # ❌ 可选，更新日期
-tags:                              # ❌ 可选，标签数组
+tags:                              # ❌ 可选，标签数组（已废弃，请使用 category）
   - 标签1
   - 标签2
+category: 分类名                   # ✅ 新方式，文章分类（每篇文章一个分类）
 draft: false                       # ❌ 可选，默认 false（true=草稿不发布）
 cover: /images/cover.jpg           # ❌ 可选，封面图路径
 ---
@@ -45,7 +44,7 @@ cover: /images/cover.jpg           # ❌ 可选，封面图路径
 |---------|---------|---------|
 | **YAML 语法错误** | `Error: YAML parsing failed` | 检查冒号 `:` 后是否有空格，缩进是否用空格（不能用 Tab） |
 | **pubDate 格式错误** | `Error: Invalid date` | 确保格式是 `YYYY-MM-DD`，例如 `2026-05-31` |
-| **tags 格式错误** | `Error: Expected array` | tags 必须是数组格式，每个标签前要有 `- ` |
+| **category 格式错误** | `Error: Expected string` | category 必须是字符串，每篇文章只能有一个分类 |
 | **draft 类型错误** | `Error: Expected boolean` | draft 只能是 `true` 或 `false`，不能加引号 |
 
 ## 四、在文章中插入图片
@@ -107,6 +106,7 @@ pubDate: 2026-05-31
 tags:
   - 旅行
   - 生活
+category: 生活
 draft: false
 cover: /images/landscape.jpg
 ---

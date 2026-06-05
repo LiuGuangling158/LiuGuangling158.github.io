@@ -1,0 +1,297 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { getPostDisplayDate } from '../utils/groupPostsByDate';
+
+interface Props {
+  posts: CollectionEntry<'blog'>[];
+  /** 初始月份 YYYY-MM，默认当前月 */
+  month?: string;
+  /** 'blog' = 点击日期筛选文章列表，'home' = 点击日期跳转到博客页 */
+  mode?: 'blog' | 'home';
+}
+
+const { posts, month, mode = 'blog' } = Astro.props;
+
+const now = new Date();
+const initialYear = month ? parseInt(month.split('-')[0]) : now.getFullYear();
+const initialMonth = month ? parseInt(month.split('-')[1]) : now.getMonth() + 1;
+
+// 构建所有文章日期数据 JSON（供客户端 JS 使用）
+interface DateEntry {
+  y: number; m: number; d: number; count: number;
+}
+const dateMap = new Map<string, number>();
+for (const post of posts) {
+  const d = getPostDisplayDate(post);
+  const key = `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`;
+  dateMap.set(key, (dateMap.get(key) ?? 0) + 1);
+}
+const dateEntries: DateEntry[] = [];
+for (const [key, count] of dateMap) {
+  const [y, m, d] = key.split('-').map(Number);
+  dateEntries.push({ y, m, d, count });
+}
+const dateData = JSON.stringify(dateEntries);
+
+// 计算初始月份数据（服务端首屏渲染用）
+const firstDay = new Date(initialYear, initialMonth - 1, 1);
+const lastDay = new Date(initialYear, initialMonth, 0);
+const daysInMonth = lastDay.getDate();
+let startDow = firstDay.getDay() - 1;
+if (startDow < 0) startDow = 6;
+
+const initialDayCounts: Record<number, number> = {};
+for (const e of dateEntries) {
+  if (e.y === initialYear && e.m === initialMonth) {
+    initialDayCounts[e.d] = e.count;
+  }
+}
+const initialTotal = Object.values(initialDayCounts).reduce((a, b) => a + b, 0);
+
+const monthLabel = `${initialYear}年${initialMonth}月`;
+const weekdayLabels = ['一', '二', '三', '四', '五', '六', '日'];
+
+const td = new Date();
+const isToday = (day: number) =>
+  initialYear === td.getFullYear() && initialMonth === td.getMonth() + 1 && day === td.getDate();
+---
+
+<div
+  class="blog-calendar card-kawaii p-5"
+  id="blog-calendar"
+  data-mode={mode}
+  data-dates={dateData}
+  data-year={initialYear}
+  data-month={initialMonth}
+>
+  <!-- 头部：月份导航 -->
+  <div class="cal-header">
+    <button class="cal-nav-btn" id="cal-prev" aria-label="上一个月">←</button>
+    <div class="cal-title-wrap">
+      <h2 class="cal-title" id="cal-title">{monthLabel}</h2>
+      {initialTotal > 0 && (
+        <span class="cal-total" id="cal-total">{initialTotal} 篇</span>
+      )}
+      <span class="cal-total hidden" id="cal-total-zero">0 篇</span>
+    </div>
+    <button class="cal-nav-btn" id="cal-next" aria-label="下一个月">→</button>
+  </div>
+
+  <!-- 表头 -->
+  <div class="cal-weekdays">
+    {weekdayLabels.map((w) => <span class="cal-weekday">{w}</span>)}
+  </div>
+
+  <!-- 日期格子 -->
+  <div class="cal-grid" id="cal-grid">
+    {Array.from({ length: startDow }).map(() => <div class="cal-cell is-empty"></div>)}
+    {Array.from({ length: daysInMonth }).map((_, i) => {
+      const day = i + 1;
+      const count = initialDayCounts[day] ?? 0;
+      const today = isToday(day);
+      return (
+        <div
+          class:list={['cal-cell', today && 'is-today', count > 0 && 'has-posts']}
+          data-day={day}
+        >
+          {count > 0 ? (
+            <button class="cal-day-link" data-day={day} title={`${count} 篇文章`}>
+              <span class="cal-day-num">{day}</span>
+              <span class="cal-dot"></span>
+            </button>
+          ) : (
+            <span class="cal-day-num cal-day-muted">{day}</span>
+          )}
+        </div>
+      );
+    })}
+  </div>
+
+  <!-- 图例 -->
+  <div class="cal-legend">
+    <span class="cal-legend-item">
+      <span class="cal-dot-sample"></span> 有文章
+    </span>
+    <span class="cal-legend-item">
+      <span class="cal-today-sample"></span> 今天
+    </span>
+  </div>
+</div>
+
+<script>
+// 日历客户端交互脚本
+(function () {
+  const root = document.getElementById('blog-calendar')!;
+  const mode = root.dataset.mode!; // 'blog' | 'home'
+  const dateEntries: { y: number; m: number; d: number; count: number }[] = JSON.parse(root.dataset.dates!);
+
+  let year = parseInt(root.dataset.year!);
+  let month = parseInt(root.dataset.month!);
+
+  const titleEl = document.getElementById('cal-title')!;
+  const totalEl = document.getElementById('cal-total')!;
+  const totalZeroEl = document.getElementById('cal-total-zero')!;
+  const gridEl = document.getElementById('cal-grid')!;
+  const prevBtn = document.getElementById('cal-prev')!;
+  const nextBtn = document.getElementById('cal-next')!;
+
+  const weekdayLabels = ['一', '二', '三', '四', '五', '六', '日'];
+
+  function getDayCount(y: number, m: number, d: number): number {
+    for (const e of dateEntries) {
+      if (e.y === y && e.m === m && e.d === d) return e.count;
+    }
+    return 0;
+  }
+
+  function isToday(y: number, m: number, d: number): boolean {
+    const td = new Date();
+    return y === td.getFullYear() && m === td.getMonth() + 1 && d === td.getDate();
+  }
+
+  function renderCalendar() {
+    titleEl.textContent = `${year}年${month}月`;
+
+    const firstDay = new Date(year, month - 1, 1);
+    const lastDay = new Date(year, month, 0);
+    const daysInMonth = lastDay.getDate();
+    let startDow = firstDay.getDay() - 1;
+    if (startDow < 0) startDow = 6;
+
+    let totalInMonth = 0;
+    const dayCounts: number[] = [];
+    for (let d = 1; d <= daysInMonth; d++) {
+      const c = getDayCount(year, month, d);
+      dayCounts.push(c);
+      totalInMonth += c;
+    }
+
+    // 总文章数
+    if (totalInMonth > 0) {
+      totalEl.textContent = `${totalInMonth} 篇`;
+      totalEl.classList.remove('hidden');
+      totalZeroEl.classList.add('hidden');
+    } else {
+      totalEl.classList.add('hidden');
+      totalZeroEl.classList.remove('hidden');
+    }
+
+    // 禁用下个月按钮（如果当前月）
+    const now = new Date();
+    const isCurrentMonth = year === now.getFullYear() && month === now.getMonth() + 1;
+    if (isCurrentMonth) {
+      nextBtn.classList.add('pointer-events-none', 'opacity-30');
+    } else {
+      nextBtn.classList.remove('pointer-events-none', 'opacity-30');
+    }
+
+    // 渲染格子
+    let html = '';
+    // 空白填充
+    for (let i = 0; i < startDow; i++) {
+      html += '<div class="cal-cell is-empty"></div>';
+    }
+    // 日期格
+    for (let d = 1; d <= daysInMonth; d++) {
+      const count = dayCounts[d - 1];
+      const today = isToday(year, month, d);
+      let cls = 'cal-cell';
+      if (today) cls += ' is-today';
+      if (count > 0) cls += ' has-posts';
+
+      html += `<div class="${cls}">`;
+      if (count > 0) {
+        html += `<button class="cal-day-link" data-day="${d}" title="${count} 篇文章">
+          <span class="cal-day-num">${d}</span>
+          <span class="cal-dot"></span>
+        </button>`;
+      } else {
+        html += `<span class="cal-day-num cal-day-muted">${d}</span>`;
+      }
+      html += '</div>';
+    }
+    gridEl.innerHTML = html;
+
+    // 绑定日期点击事件
+    gridEl.querySelectorAll('.cal-day-link').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const day = parseInt((btn as HTMLElement).dataset.day!);
+        if (mode === 'home') {
+          // 首页：跳转到博客页
+          const mStr = `${year}-${String(month).padStart(2, '0')}`;
+          window.location.href = `/blog/?month=${mStr}&day=${day}`;
+        } else {
+          // 博客页：筛选文章列表
+          filterBlogPosts(year, month, day);
+        }
+      });
+    });
+  }
+
+  function filterBlogPosts(y: number, m: number, d: number) {
+    // 更新当前高亮的日期
+    gridEl.querySelectorAll('.cal-cell').forEach((cell) => {
+      cell.classList.remove('cal-active');
+    });
+    const activeBtn = gridEl.querySelector(`[data-day="${d}"]`);
+    if (activeBtn) {
+      activeBtn.closest('.cal-cell')?.classList.add('cal-active');
+    }
+
+    // 更新 URL
+    const mStr = `${y}-${String(m).padStart(2, '0')}`;
+    const newUrl = `/blog/?month=${mStr}&day=${d}`;
+    history.replaceState(null, '', newUrl);
+
+    // 筛选 PostCard 列表
+    const postItems = document.querySelectorAll('[data-post-date]');
+    postItems.forEach((item) => {
+      const dateStr = (item as HTMLElement).dataset.postDate!; // "YYYY-M-D"
+      const [py, pm, pd] = dateStr.split('-').map(Number);
+      if (py === y && pm === m && pd === d) {
+        (item as HTMLElement).style.display = '';
+      } else {
+        (item as HTMLElement).style.display = 'none';
+      }
+    });
+
+    // 更新筛选状态提示
+    const filterHint = document.getElementById('cal-filter-hint');
+    if (filterHint) {
+      filterHint.innerHTML = `筛选：<span class="font-medium text-sakura-600">${y}年${m}月${d}日</span> · <a href="/blog/" class="text-sakura-600 hover:underline">清除筛选</a>`;
+      filterHint.classList.remove('hidden');
+    }
+  }
+
+  // 清除筛选（由外部按钮调用时）
+  (window as any).__clearCalendarFilter = function () {
+    const postItems = document.querySelectorAll('[data-post-date]');
+    postItems.forEach((item) => {
+      (item as HTMLElement).style.display = '';
+    });
+    const filterHint = document.getElementById('cal-filter-hint');
+    if (filterHint) filterHint.classList.add('hidden');
+    gridEl.querySelectorAll('.cal-cell').forEach((cell) => {
+      cell.classList.remove('cal-active');
+    });
+    history.replaceState(null, '', '/blog/');
+  };
+
+  // 上一月 / 下一月
+  prevBtn.addEventListener('click', () => {
+    if (month === 1) { year--; month = 12; } else { month--; }
+    const mStr = `${year}-${String(month).padStart(2, '0')}`;
+    if (mode === 'blog') history.replaceState(null, '', `/blog/?month=${mStr}`);
+    renderCalendar();
+  });
+
+  nextBtn.addEventListener('click', () => {
+    const now = new Date();
+    if (year === now.getFullYear() && month === now.getMonth() + 1) return;
+    if (month === 12) { year++; month = 1; } else { month++; }
+    const mStr = `${year}-${String(month).padStart(2, '0')}`;
+    if (mode === 'blog') history.replaceState(null, '', `/blog/?month=${mStr}`);
+    renderCalendar();
+  });
+})();
+</script>

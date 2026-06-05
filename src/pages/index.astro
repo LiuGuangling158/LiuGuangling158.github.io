@@ -1,6 +1,9 @@
 ---
 import HomeLayout from '../layouts/HomeLayout.astro';
 import HeroSlideshow from '../components/HeroSlideshow.astro';
+import SkillBadges from '../components/SkillBadges.astro';
+import GitHubCard from '../components/GitHubCard.astro';
+import BlogCalendar from '../components/BlogCalendar.astro';
 import DateTimeline from '../components/DateTimeline.astro';
 import { getCollection } from 'astro:content';
 const allPosts = await getCollection('blog', ({ data }) => !data.draft);
@@ -9,19 +12,110 @@ const allPosts = await getCollection('blog', ({ data }) => !data.draft);
 <HomeLayout>
   <HeroSlideshow slot="hero" />
 
-  <section aria-labelledby="blog-home-title">
+  <!-- 关于我：技能雷达 + GitHub -->
+  <section aria-labelledby="about-home-title" class="about-section">
+    <header class="mb-8">
+      <h2 id="about-home-title" class="flex items-center gap-3 text-2xl font-bold text-ink">
+        <span class="inline-block h-px w-8 rounded-full bg-sakura-300"></span>
+        关于我
+      </h2>
+      <p class="mt-1 pl-11 text-sm text-ink-muted">
+        技术栈 &amp; GitHub 足迹
+      </p>
+    </header>
+
+    <div class="about-grid">
+      <div class="about-card card-kawaii p-5 sm:p-6">
+        <h3 class="about-card-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+          </svg>
+          技能栈
+        </h3>
+        <SkillBadges />
+      </div>
+
+      <div class="about-card-github">
+        <GitHubCard />
+      </div>
+    </div>
+  </section>
+
+  <!-- 博客区域 -->
+  <section aria-labelledby="blog-home-title" class="blog-section">
     <header class="mb-8 flex flex-wrap items-end justify-between gap-4">
       <div>
-        <h2 id="blog-home-title" class="text-2xl font-bold text-ink">
+        <h2 id="blog-home-title" class="flex items-center gap-3 text-2xl font-bold text-ink">
+          <span class="inline-block h-px w-8 rounded-full bg-sakura-300"></span>
           博客
         </h2>
-        <p class="mt-1 text-sm text-ink-muted">
+        <p class="mt-1 pl-11 text-sm text-ink-muted">
           按日期查看发布与更新的文章
         </p>
       </div>
-      <a href="/blog/" class="btn-kawaii text-sm">全部文章与标签</a>
+      <a href="/blog/" class="btn-kawaii text-sm">全部文章</a>
     </header>
+
+    <!-- 可视化日历 -->
+    <div class="mb-8">
+      <BlogCalendar posts={allPosts} mode="home" />
+    </div>
 
     <DateTimeline posts={allPosts} />
   </section>
 </HomeLayout>
+
+<style>
+  .about-section {
+    margin-bottom: 3rem;
+    padding-top: 0.5rem;
+  }
+
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+
+  @media (min-width: 768px) {
+    .about-grid {
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+    }
+  }
+
+  .about-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .about-card-title {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--color-ink-muted);
+    margin-bottom: 0.5rem;
+    align-self: flex-start;
+  }
+
+  .about-card-title svg {
+    color: var(--color-sakura-500);
+    flex-shrink: 0;
+  }
+
+  .about-card-github {
+    display: flex;
+  }
+
+  .about-card-github > * {
+    flex: 1;
+  }
+
+  .blog-section {
+    border-top: 1px solid var(--color-sakura-200);
+    padding-top: 2.5rem;
+  }
+</style>

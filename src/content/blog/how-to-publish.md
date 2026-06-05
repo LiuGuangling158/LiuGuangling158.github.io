@@ -1,9 +1,8 @@
 ---
 title: 如何发布一篇文章
 description: 本地 Markdown 与 Git 的发文方式说明
-pubDate: 2025-05-23
-tags:
-  - 教程
+pubDate: 2026-05-23
+category: 教程分享
 draft: false
 ---
 

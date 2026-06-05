@@ -1,15 +1,25 @@
 ---
 import BaseLayout from './BaseLayout.astro';
 import Giscus from '../components/Giscus.astro';
+import TableOfContents from '../components/TableOfContents.astro';
 import { site } from '../config/site';
 import type { CollectionEntry } from 'astro:content';
 
-interface Props {
-  post: CollectionEntry<'blog'>;
+interface Heading {
+  depth: number;
+  slug: string;
+  text: string;
 }
 
-const { post } = Astro.props;
-const { title, description, pubDate, updatedDate, tags } = post.data;
+interface Props {
+  post: CollectionEntry<'blog'>;
+  headings?: Heading[];
+}
+
+const { post, headings = [] } = Astro.props;
+const { title, description, pubDate, updatedDate, category } = post.data;
+const tocItems = headings.filter((h) => h.depth > 1);
+const showSidebar = tocItems.length >= 2;
 const pageTitle = `${title} — ${site.name}`;
 const formattedDate = pubDate.toLocaleDateString('zh-CN', {
   year: 'numeric',
@@ -31,19 +41,13 @@ const formattedDate = pubDate.toLocaleDateString('zh-CN', {
         )
       }
       {
-        tags.length > 0 && (
-          <ul class="mt-4 flex flex-wrap gap-2">
-            {tags.map((tag) => (
-              <li>
-                <a
-                  href={`/blog/?tag=${encodeURIComponent(tag)}`}
-                  class="rounded-full bg-sakura-100 px-3 py-1 text-xs font-medium text-sakura-600 hover:bg-sakura-200"
-                >
-                  #{tag}
-                </a>
-              </li>
-            ))}
-          </ul>
+        category && (
+          <a
+            href={`/categories/${category}/`}
+            class="mt-4 inline-block rounded-full bg-sakura-100 px-3 py-1 text-xs font-medium text-sakura-600 hover:bg-sakura-200"
+          >
+            {category}
+          </a>
         )
       }
       {
@@ -60,8 +64,16 @@ const formattedDate = pubDate.toLocaleDateString('zh-CN', {
       }
     </header>
 
-    <div class="card-kawaii prose-blog p-6 sm:p-8">
-      <slot />
+    {/* 正文 + 目录双栏布局（仅在标题数量足够时显示侧边栏） */}
+    <div class={showSidebar ? "article-body" : ""}>
+      {showSidebar && (
+        <aside class="article-sidebar">
+          <TableOfContents headings={headings} />
+        </aside>
+      )}
+      <div class={showSidebar ? "article-content card-kawaii prose-blog p-6 sm:p-8" : "card-kawaii prose-blog p-6 sm:p-8"}>
+        <slot />
+      </div>
     </div>
 
     <nav

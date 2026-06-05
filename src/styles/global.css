@@ -68,6 +68,8 @@ body {
 /* 文章内容排版 */
 .prose-blog {
   @apply text-ink leading-relaxed;
+  font-size: 1.0625rem;
+  line-height: 1.8;
 }
 
 .prose-blog h1,
@@ -77,19 +79,19 @@ body {
 }
 
 .prose-blog h1 {
-  @apply text-3xl mt-8 mb-4;
+  @apply text-3xl mt-10 mb-5;
 }
 
 .prose-blog h2 {
-  @apply text-2xl mt-8 mb-3 pb-2 border-b border-sakura-200;
+  @apply text-2xl mt-10 mb-4 pb-2 border-b border-sakura-200;
 }
 
 .prose-blog h3 {
-  @apply text-xl mt-6 mb-2;
+  @apply text-xl mt-8 mb-3;
 }
 
 .prose-blog p {
-  @apply my-4;
+  @apply my-5;
 }
 
 .prose-blog a {
@@ -98,7 +100,7 @@ body {
 
 .prose-blog ul,
 .prose-blog ol {
-  @apply my-4 pl-6;
+  @apply my-5 pl-6;
 }
 
 .prose-blog ul {
@@ -110,19 +112,21 @@ body {
 }
 
 .prose-blog li {
-  @apply my-1;
+  @apply my-1.5;
 }
 
 .prose-blog blockquote {
-  @apply my-4 border-l-4 border-sakura-400 bg-sakura-100/60 px-4 py-2 rounded-r-xl text-ink-muted italic;
+  @apply my-5 border-l-4 border-sakura-400 bg-sakura-100/60 px-5 py-3 rounded-r-xl text-ink-muted italic;
 }
 
 .prose-blog pre {
-  @apply my-4 overflow-x-auto rounded-2xl border border-sakura-200 bg-white/80 p-4 text-sm shadow-sm;
+  @apply my-5 overflow-x-auto rounded-2xl border border-sakura-200/80 bg-white/90 p-5 text-sm shadow-inner;
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-sakura-300) transparent;
 }
 
 .prose-blog code {
-  @apply rounded-md bg-sakura-100 px-1.5 py-0.5 text-sm text-sakura-600;
+  @apply rounded-md bg-sakura-100 px-1.5 py-0.5 text-[0.9em] text-sakura-600;
 }
 
 .prose-blog pre code {
@@ -134,15 +138,66 @@ body {
 }
 
 .prose-blog hr {
-  @apply my-8 border-sakura-200;
+  @apply my-10 border-sakura-200;
+}
+
+/* 表格样式 */
+.prose-blog table {
+  @apply my-5 w-full border-collapse overflow-hidden rounded-2xl border border-sakura-200/80;
+}
+
+.prose-blog thead {
+  @apply bg-sakura-100/70;
+}
+
+.prose-blog th {
+  @apply px-4 py-2.5 text-left text-sm font-semibold text-ink;
+}
+
+.prose-blog td {
+  @apply border-t border-sakura-100 px-4 py-2.5 text-sm;
+}
+
+.prose-blog tbody tr:nth-child(even) {
+  @apply bg-sakura-50/50;
+}
+
+.prose-blog tbody tr:hover {
+  @apply bg-sakura-100/40;
+}
+
+/* 图片说明 */
+.prose-blog figcaption {
+  @apply mt-2 text-center text-sm text-ink-muted;
+}
+
+.prose-blog strong {
+  @apply font-semibold text-ink;
 }
 
 .card-kawaii {
-  @apply rounded-3xl border-2 border-white/80 bg-white/70 shadow-lg shadow-sakura-200/40 backdrop-blur-sm;
+  @apply rounded-3xl border border-white/90 bg-white/75 backdrop-blur-sm;
+  box-shadow:
+    0 1px 3px rgba(240, 98, 146, 0.08),
+    0 8px 24px rgba(240, 98, 146, 0.06),
+    0 1px 0 rgba(255, 255, 255, 0.9) inset;
+  transition: box-shadow 0.25s ease, transform 0.25s ease;
+}
+
+.card-kawaii:hover {
+  box-shadow:
+    0 2px 6px rgba(240, 98, 146, 0.12),
+    0 12px 32px rgba(240, 98, 146, 0.09),
+    0 1px 0 rgba(255, 255, 255, 0.9) inset;
 }
 
 .btn-kawaii {
-  @apply inline-flex items-center justify-center gap-2 rounded-full border-2 border-sakura-200 bg-white/90 px-5 py-2 text-sm font-medium text-sakura-600 shadow-sm transition hover:border-sakura-400 hover:bg-sakura-50 hover:shadow-md active:scale-[0.98];
+  @apply inline-flex items-center justify-center gap-2 rounded-full border border-sakura-300 bg-white/90 px-5 py-2 text-sm font-medium text-sakura-600 transition hover:border-sakura-400 hover:bg-sakura-50 active:scale-[0.98];
+  box-shadow: 0 1px 3px rgba(240, 98, 146, 0.08);
+}
+
+.btn-kawaii:hover {
+  box-shadow: 0 2px 8px rgba(240, 98, 146, 0.15);
 }
 
 /* —— 首页全屏轮播 —— */
@@ -151,7 +206,7 @@ body {
 }
 
 .hero {
-  @apply relative isolate flex min-h-[100dvh] w-full flex-col items-center justify-center overflow-hidden;
+  @apply relative isolate flex min-h-[92dvh] w-full flex-col items-center justify-center overflow-hidden;
 }
 
 .hero-slides {
@@ -171,7 +226,7 @@ body {
 }
 
 .hero-overlay {
-  @apply absolute inset-0 bg-gradient-to-b from-black/15 via-black/10 to-sakura-50/95;
+  @apply absolute inset-0 bg-gradient-to-b from-black/15 via-black/10 to-sakura-50/98;
 }
 
 .hero-content {
@@ -215,7 +270,11 @@ body {
 }
 
 .home-blog-wrap {
-  @apply relative z-20 rounded-t-[2rem] border-t border-sakura-200/80 bg-sakura-50 shadow-[0_-12px_40px_rgba(255,158,196,0.15)];
+  @apply relative z-20 rounded-t-[2rem] bg-sakura-50;
+  box-shadow:
+    0 -8px 32px rgba(255, 158, 196, 0.12),
+    0 -2px 8px rgba(255, 158, 196, 0.06);
+  border-top: 1px solid rgba(255, 158, 196, 0.2);
 }
 
 /* —— 按日期分组时间线 —— */
@@ -289,4 +348,172 @@ body {
 
 .date-timeline-post:hover .date-timeline-arrow {
   @apply translate-x-0.5 text-sakura-600;
+}
+
+/* —— 博客日历 —— */
+.blog-calendar {
+  @apply select-none;
+}
+
+.cal-header {
+  @apply mb-4 flex items-center justify-between;
+}
+
+.cal-nav-btn {
+  @apply flex h-9 w-9 items-center justify-center rounded-full text-lg text-sakura-500 transition hover:bg-sakura-100 hover:text-sakura-600;
+}
+
+.cal-title-wrap {
+  @apply flex items-center gap-3;
+}
+
+.cal-title {
+  @apply text-lg font-bold text-ink;
+}
+
+.cal-total {
+  @apply rounded-full bg-sakura-100 px-2.5 py-0.5 text-xs font-medium text-sakura-600;
+}
+
+.cal-weekdays {
+  @apply mb-2 grid grid-cols-7 text-center;
+}
+
+.cal-weekday {
+  @apply py-1 text-xs font-medium text-ink-muted;
+}
+
+.cal-grid {
+  @apply grid grid-cols-7 gap-1;
+}
+
+.cal-cell {
+  @apply relative flex aspect-square items-center justify-center rounded-xl transition;
+}
+
+.cal-cell.is-empty {
+  @apply pointer-events-none;
+}
+
+.cal-cell.has-posts {
+  @apply cursor-pointer;
+}
+
+.cal-cell.is-today:not(.has-posts) {
+  @apply ring-2 ring-sakura-400/60;
+}
+
+.cal-day-link {
+  @apply relative flex h-full w-full flex-col items-center justify-center rounded-xl transition hover:bg-sakura-100;
+}
+
+.cal-day-num {
+  @apply text-sm font-medium text-ink;
+}
+
+.cal-day-muted {
+  @apply text-ink-muted/50;
+}
+
+.cal-cell.is-today .cal-day-num {
+  @apply font-bold text-sakura-600;
+}
+
+.cal-cell.has-posts .cal-day-num {
+  @apply text-sakura-600 font-semibold;
+}
+
+.cal-dot {
+  @apply mt-0.5 inline-block h-1.5 w-1.5 rounded-full bg-sakura-400;
+}
+
+/* 多篇文章时增大圆点 */
+.cal-cell.has-posts[style] .cal-dot {
+  @apply h-1.5 w-1.5;
+}
+
+.cal-legend {
+  @apply mt-4 flex items-center justify-center gap-4 text-xs text-ink-muted;
+}
+
+.cal-legend-item {
+  @apply inline-flex items-center gap-1;
+}
+
+.cal-dot-sample {
+  @apply inline-block h-2 w-2 rounded-full bg-sakura-400;
+}
+
+.cal-today-sample {
+  @apply inline-block h-2.5 w-2.5 rounded ring-2 ring-sakura-400/60;
+}
+
+.cal-cell.cal-active {
+  @apply bg-sakura-200/60 ring-2 ring-sakura-400;
+}
+
+.cal-cell.cal-active .cal-day-num {
+  @apply text-sakura-600 font-bold;
+}
+
+/* —— 文章正文双栏布局 —— */
+.article-body {
+  @apply flex flex-col gap-6 lg:flex-row-reverse lg:items-start;
+}
+
+.article-content {
+  @apply min-w-0 flex-1;
+  max-width: 56rem; /* 896px，防止无 TOC 时文字行过长 */
+}
+
+.article-sidebar {
+  @apply w-full lg:sticky lg:top-24 lg:w-56;
+}
+
+/* —— 文章目录 (TOC) —— */
+.toc {
+  @apply rounded-2xl border border-sakura-200/80 bg-white/85 p-4 backdrop-blur-sm;
+}
+
+.toc-toggle {
+  @apply flex w-full items-center gap-2 text-sm font-semibold text-ink lg:hidden;
+}
+
+.toc-toggle-icon {
+  @apply h-4 w-4 text-sakura-500;
+}
+
+.toc-chevron {
+  @apply ml-auto h-4 w-4 text-ink-muted transition-transform;
+}
+
+.toc-toggle[aria-expanded='true'] .toc-chevron {
+  @apply rotate-180;
+}
+
+.toc-title-desktop {
+  @apply mb-2 hidden text-sm font-semibold text-ink lg:block;
+}
+
+/* 目录列表：display 由 Tailwind 工具类 hidden/lg:flex 控制，不在此处定义 */
+.toc-list {
+  @apply mt-2 flex-col gap-1;
+}
+
+.toc-item {
+  @apply list-none;
+}
+
+.toc-link {
+  @apply relative block truncate rounded-lg px-2.5 py-1.5 text-sm leading-relaxed text-ink-muted transition-colors hover:bg-sakura-100 hover:text-sakura-600;
+}
+
+.toc-link-active {
+  @apply bg-sakura-100 font-medium text-sakura-600;
+}
+
+/* TOC active 左边指示条 */
+.toc-link-active::before {
+  content: '';
+  @apply absolute -left-0.5 top-1/2 h-4 w-0.5 -translate-y-1/2 rounded-full bg-sakura-400;
 }

@@ -1,0 +1,54 @@
+---
+import { skills } from '../config/skills';
+
+// 徽章配色方案（循环使用）
+const badgeColors = [
+  { bg: 'bg-sakura-100', text: 'text-sakura-600', ring: 'ring-sakura-300/40' },
+  { bg: 'bg-violet-50', text: 'text-violet-600', ring: 'ring-violet-300/40' },
+  { bg: 'bg-cyan-50', text: 'text-cyan-700', ring: 'ring-cyan-300/40' },
+  { bg: 'bg-amber-50', text: 'text-amber-700', ring: 'ring-amber-300/40' },
+  { bg: 'bg-emerald-50', text: 'text-emerald-700', ring: 'ring-emerald-300/40' },
+  { bg: 'bg-sky-50', text: 'text-sky-700', ring: 'ring-sky-300/40' },
+  { bg: 'bg-rose-50', text: 'text-rose-600', ring: 'ring-rose-300/40' },
+  { bg: 'bg-indigo-50', text: 'text-indigo-600', ring: 'ring-indigo-300/40' },
+] as const;
+---
+
+<div class="skill-badges">
+  {skills.map((skill, i) => {
+    const color = badgeColors[i % badgeColors.length];
+    return (
+      <span
+        class={`skill-badge ${color.bg} ${color.text} ${color.ring}`}
+      >
+        {skill}
+      </span>
+    );
+  })}
+</div>
+
+<style>
+  .skill-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .skill-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.375rem 0.875rem;
+    border-radius: 9999px;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    line-height: 1.4;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    cursor: default;
+    user-select: none;
+  }
+
+  .skill-badge:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(240, 98, 146, 0.15);
+  }
+</style>

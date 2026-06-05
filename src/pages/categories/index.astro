@@ -1,0 +1,55 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+import { categories } from '../../config/categories';
+import { site } from '../../config/site';
+
+const allPosts = await getCollection('blog', ({ data }) => !data.draft);
+
+// Count posts per category
+const categoryCounts = new Map<string, number>();
+for (const post of allPosts) {
+  const cat = post.data.category;
+  categoryCounts.set(cat, (categoryCounts.get(cat) || 0) + 1);
+}
+
+const totalPosts = allPosts.length;
+---
+
+<BaseLayout
+  title={`文章分类 — ${site.name}`}
+  description="按分类浏览全部文章"
+>
+  <header class="mb-8">
+    <h1 class="text-3xl font-bold text-ink">文章分类</h1>
+    <p class="mt-2 text-ink-muted">
+      共 {categories.length} 个分类 · {totalPosts} 篇文章
+    </p>
+  </header>
+
+  <ul class="grid gap-4 sm:grid-cols-2">
+    {
+      categories.map((cat) => {
+        const count = categoryCounts.get(cat.slug) || 0;
+        return (
+          <li>
+            <a
+              href={`/categories/${cat.slug}/`}
+              class="card-kawaii group block p-5 transition hover:-translate-y-0.5 hover:shadow-xl"
+            >
+              <div class="flex items-center justify-between">
+                <h2 class="text-lg font-bold text-ink group-hover:text-sakura-600">
+                  {cat.name}
+                </h2>
+                <span class="rounded-full bg-sakura-100 px-3 py-0.5 text-xs font-medium text-sakura-600">
+                  {count} 篇
+                </span>
+              </div>
+              <p class="mt-2 text-sm text-ink-muted">{cat.description}</p>
+            </a>
+          </li>
+        );
+      })
+    }
+  </ul>
+</BaseLayout>
