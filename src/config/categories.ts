@@ -8,23 +8,22 @@ export const categories: Category[] = [
   {
     slug: '前端开发',
     name: '前端开发',
-    description:
-      '前端技术文章，包括 Canvas、CSS 动画、交互设计与项目实战',
+    description: '前端技术文章，包括 Canvas、CSS 动画、交互设计与项目实战',
   },
   {
-    slug: '产品设计',
-    name: '产品设计',
-    description: '产品需求文档与功能设计方案',
+    slug: '游戏策划',
+    name: '游戏策划',
+    description: '游戏的拆解案和分析',
   },
   {
-    slug: '技术架构',
-    name: '技术架构',
-    description: '系统架构设计与技术选型方案',
+    slug: '技术架构和设计',
+    name: '技术架构和设计',
+    description: '系统架构设计与技术选型方案，产品需求文档与功能设计方案',
   },
   {
-    slug: '编程入门',
-    name: '编程入门',
-    description: '编程语言入门教程与基础知识',
+    slug: '编程学习记录',
+    name: '编程学习记录',
+    description: '编程语言以及算法的学习记录',
   },
   {
     slug: '教程分享',
