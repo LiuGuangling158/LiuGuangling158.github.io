@@ -16,9 +16,9 @@ export const site = {
 export const giscus = {
   enabled: true,
   repo: 'liuguangling158/liuguangling158.github.io',
-  repoId: '',
+  repoId: 'R_kgDORj9EDQ',
   category: 'Blog Comments',
-  categoryId: '',
+  categoryId: 'DIC_kwDORj9EDc4C-o38',
   mapping: 'pathname' as const,
   strict: '1',
   reactionsEnabled: '1',
