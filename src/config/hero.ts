@@ -6,4 +6,4 @@ export const heroImages = [
 ] as const;
 
 /** 每张背景停留时间（毫秒） */
-export const heroIntervalMs = 5500;
+export const heroIntervalMs = 10000;
