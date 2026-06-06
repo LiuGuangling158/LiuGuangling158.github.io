@@ -1,0 +1,22 @@
+---
+import { site, giscus } from '../../config/site';
+
+const githubPath = site.github.replace(/^https?:\/\/github\.com\//, '');
+const owner = githubPath || site.author;
+const repo = giscus.repo || `${owner}.github.io`;
+---
+
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>管理后台 — {site.name}</title>
+  <link rel="stylesheet" href="/admin/admin.css" />
+</head>
+<body class="admin-body">
+  <div id="admin-app" data-owner={owner} data-repo={repo}></div>
+  <script type="module" src="/admin/js/main.js"></script>
+</body>
+</html>
