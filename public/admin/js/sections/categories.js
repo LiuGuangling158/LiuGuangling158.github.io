@@ -149,23 +149,26 @@ export class CategoriesSection {
     return item;
   }
 
-  _generateCategoriesTs() {
-    const formatCat = (cat, indent = '    ') => {
-      const lines = [];
-      lines.push(`${indent}  slug: '${cat.slug}'`);
-      lines.push(`${indent}  name: '${cat.name}'`);
-      // 长描述折行
-      if (cat.description && cat.description.length > 60) {
-        const words = cat.description;
-        lines.push(`${indent}  description:`);
-        lines.push(`${indent}    '${words}',`);
-      } else {
-        lines.push(`${indent}  description: '${cat.description}',`);
-      }
-      return `${indent}{\n${lines.join('\n')}\n${indent}}`;
-    };
+  _escape(str) {
+    return (str || '').replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+  }
 
-    const items = this.categories.map((c) => formatCat(c)).join(',\n');
+  _generateCategoriesTs() {
+    const esc = (s) => this._escape(s);
+
+    const items = this.categories.map((cat) => {
+      const desc = esc(cat.description);
+      const lines = [];
+      lines.push(`    slug: '${esc(cat.slug)}',`);
+      lines.push(`    name: '${esc(cat.name)}',`);
+      if (cat.description && cat.description.length > 60) {
+        lines.push(`    description:`);
+        lines.push(`      '${desc}',`);
+      } else {
+        lines.push(`    description: '${desc}',`);
+      }
+      return `  {\n${lines.join('\n')}\n  }`;
+    }).join(',\n');
 
     return `export interface Category {
   slug: string;

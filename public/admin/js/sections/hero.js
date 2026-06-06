@@ -164,9 +164,14 @@ export class HeroSection {
     this._render(body);
   }
 
+  _escape(str) {
+    return (str || '').replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+  }
+
   _generateHeroTs() {
+    const esc = (s) => this._escape(s);
     const imagesStr = this.images
-      .map((img) => `  { src: '${img.src}', alt: '${img.alt}' }`)
+      .map((img) => `  { src: '${esc(img.src)}', alt: '${esc(img.alt)}' }`)
       .join(',\n');
 
     return `/** 首屏轮播背景（将图片放到 public/images/hero/ 并在此配置） */

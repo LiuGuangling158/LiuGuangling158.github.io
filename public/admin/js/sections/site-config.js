@@ -188,42 +188,42 @@ export class SiteConfigSection {
     return { site, giscus };
   }
 
+  _escape(str) {
+    return (str || '').replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+  }
+
   _generateSiteTs(siteData, giscusData) {
     const s = siteData;
     const g = giscusData;
 
-    // 字符串字段格式化
-    const str = (val) => `'${val}'`;
-
-    // 需要 as const 的字段
-    const asConstFields = ['mapping', 'inputPosition'];
+    const esc = (val) => this._escape(val);
 
     const giscusLines = [];
     giscusLines.push(`  enabled: ${g.enabled},`);
-    giscusLines.push(`  repo: ${str(g.repo)},`);
-    giscusLines.push(`  repoId: ${str(g.repoId)},`);
-    giscusLines.push(`  category: ${str(g.category)},`);
-    giscusLines.push(`  categoryId: ${str(g.categoryId)},`);
-    giscusLines.push(`  mapping: ${str(g.mapping)} as const,`);
-    giscusLines.push(`  strict: ${str(g.strict)},`);
-    giscusLines.push(`  reactionsEnabled: ${str(g.reactionsEnabled)},`);
-    giscusLines.push(`  emitMetadata: ${str(g.emitMetadata)},`);
-    giscusLines.push(`  inputPosition: ${str(g.inputPosition)} as const,`);
-    giscusLines.push(`  theme: ${str(g.theme)},`);
-    giscusLines.push(`  lang: ${str(g.lang)},`);
+    giscusLines.push(`  repo: '${esc(g.repo)}',`);
+    giscusLines.push(`  repoId: '${esc(g.repoId)}',`);
+    giscusLines.push(`  category: '${esc(g.category)}',`);
+    giscusLines.push(`  categoryId: '${esc(g.categoryId)}',`);
+    giscusLines.push(`  mapping: '${esc(g.mapping)}' as const,`);
+    giscusLines.push(`  strict: '${esc(g.strict)}',`);
+    giscusLines.push(`  reactionsEnabled: '${esc(g.reactionsEnabled)}',`);
+    giscusLines.push(`  emitMetadata: '${esc(g.emitMetadata)}',`);
+    giscusLines.push(`  inputPosition: '${esc(g.inputPosition)}' as const,`);
+    giscusLines.push(`  theme: '${esc(g.theme)}',`);
+    giscusLines.push(`  lang: '${esc(g.lang)}',`);
 
     return `export const site = {
-  name: ${str(s.name)},
-  title: ${str(s.title)},
-  description: ${str(s.description)},
+  name: '${esc(s.name)}',
+  title: '${esc(s.title)}',
+  description: '${esc(s.description)}',
   /** 头像：public/avatar.jpg */
-  avatar: ${str(s.avatar)},
+  avatar: '${esc(s.avatar)}',
   /** 浏览器图标：public/favicon.png */
-  favicon: ${str(s.favicon)},
-  author: ${str(s.author)},
-  url: ${str(s.url)},
-  locale: ${str(s.locale)},
-  github: ${str(s.github)},
+  favicon: '${esc(s.favicon)}',
+  author: '${esc(s.author)}',
+  url: '${esc(s.url)}',
+  locale: '${esc(s.locale)}',
+  github: '${esc(s.github)}',
 } as const;
 
 /** 在 https://giscus.app/zh-CN 生成后填入；留空则评论区显示配置提示 */

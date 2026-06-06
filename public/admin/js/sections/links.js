@@ -164,13 +164,19 @@ export class LinksSection {
     return item;
   }
 
+  _escape(str) {
+    return (str || '').replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+  }
+
   _generateLinksTs() {
-    const formatItem = (item, indent = '    ') => {
+    const esc = (s) => this._escape(s);
+
+    const formatItem = (item, indent = '  ') => {
       const parts = [];
-      parts.push(`${indent}  name: '${item.name}'`);
-      parts.push(`${indent}  url: '${item.url}'`);
-      if (item.desc) parts.push(`${indent}  desc: '${item.desc}'`);
-      if (item.icon && item.icon !== 'link') parts.push(`${indent}  icon: '${item.icon}'`);
+      parts.push(`${indent}  name: '${esc(item.name)}'`);
+      parts.push(`${indent}  url: '${esc(item.url)}'`);
+      if (item.desc) parts.push(`${indent}  desc: '${esc(item.desc)}'`);
+      if (item.icon && item.icon !== 'link') parts.push(`${indent}  icon: '${esc(item.icon)}'`);
       return `${indent}{\n${parts.join(',\n')},\n${indent}}`;
     };
 

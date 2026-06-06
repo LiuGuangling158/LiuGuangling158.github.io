@@ -130,8 +130,13 @@ export class SkillsSection {
     this._render(body);
   }
 
+  _escape(str) {
+    return (str || '').replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+  }
+
   _generateSkillsTs() {
-    const items = this.skills.map((s) => `  '${s}'`).join(',\n');
+    const esc = (s) => this._escape(s);
+    const items = this.skills.map((s) => `  '${esc(s)}'`).join(',\n');
     return `/**
  * 技能列表 —— 以卡片徽章形式展示在首页
  * 增删改只需编辑此数组
