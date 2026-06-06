@@ -3,7 +3,9 @@ import { site, giscus } from '../../config/site';
 
 const githubPath = site.github.replace(/^https?:\/\/github\.com\//, '');
 const owner = githubPath || site.author;
-const repo = giscus.repo || `${owner}.github.io`;
+// giscus.repo 是 "owner/repo" 格式，只取 / 后面的 repo 名
+const rawRepo = giscus.repo || `${owner}.github.io`;
+const repo = rawRepo.includes('/') ? rawRepo.split('/')[1] : rawRepo;
 ---
 
 <!doctype html>
