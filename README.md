@@ -5,7 +5,7 @@
 ## 功能
 
 - 本地 Markdown + Git 发布
-- [Decap CMS](https://decapcms.org/) 网页后台（`/admin/`）
+- 网页管理后台（`/admin/`，GitHub Token 登录，在线编辑文章和站点配置）
 - 外链页、RSS、Sitemap
 - Giscus 评论（懒加载，需自行配置 ID）
 
