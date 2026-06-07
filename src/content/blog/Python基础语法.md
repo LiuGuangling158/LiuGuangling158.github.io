@@ -3,8 +3,9 @@ title: Python 基础语法 —— 快速入门指南
 description: 从零快速掌握 Python 基础语法，包括程序结构、输入输出、变量类型、运算符、控制流与异常处理等核心知识点，适合有其他语言基础的同学快速上手
 pubDate: 2026-06-05
 category: 编程学习记录
-cover: /images/covers/2026-06-07-k2npca.png
+cover: /images/covers/2026-06-07-3xxbwc.png
 ---
+
 
 
 
