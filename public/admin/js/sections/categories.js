@@ -112,6 +112,15 @@ export class CategoriesSection {
 
     const itemHeader = el('div', { className: 'array-item-header' });
     itemHeader.appendChild(el('span', { className: 'array-item-label' }, `分类 ${idx + 1}`));
+
+    const headerRight = el('div', { className: 'admin-flex', style: 'gap: 8px; align-items: center;' });
+
+    // 预览 chip
+    if (cat.name) {
+      const previewChip = el('span', { className: 'cat-preview-chip' }, cat.name);
+      headerRight.appendChild(previewChip);
+    }
+
     const removeBtn = el('button', {
       className: 'array-item-remove',
       onClick: () => {
@@ -119,7 +128,8 @@ export class CategoriesSection {
         this._render(body);
       },
     }, '×');
-    itemHeader.appendChild(removeBtn);
+    headerRight.appendChild(removeBtn);
+    itemHeader.appendChild(headerRight);
 
     const row1 = el('div', { className: 'form-row' });
     const slugInput = el('input', {
@@ -127,26 +137,62 @@ export class CategoriesSection {
       type: 'text',
       value: cat.slug || '',
       placeholder: '分类标识（slug）',
-      onChange: (e) => { cat.slug = e.target.value; },
+      onChange: (e) => {
+        cat.slug = e.target.value;
+        // 更新 slug 输入框的校验状态
+        this._validateSlugField(e.target);
+      },
     });
     const nameInput = el('input', {
       className: 'form-input',
       type: 'text',
       value: cat.name || '',
       placeholder: '显示名称',
-      onChange: (e) => { cat.name = e.target.value; },
+      onChange: (e) => {
+        cat.name = e.target.value;
+        // 更新预览 chip
+        const chip = item.querySelector('.cat-preview-chip');
+        if (chip) chip.textContent = e.target.value || '预览';
+      },
     });
     row1.append(formGroup('标识 (slug)', slugInput), formGroup('显示名称', nameInput));
+
+    // 描述 + 字数统计
+    const descGroup = el('div', { className: 'form-group' });
+    const descLabelRow = el('div', { style: 'display: flex; justify-content: space-between; align-items: center;' });
+    descLabelRow.appendChild(el('label', { className: 'form-label' }, '描述'));
+    const charCount = el('span', { className: 'char-count' }, `${(cat.description || '').length} 字`);
+    descLabelRow.appendChild(charCount);
 
     const descInput = el('textarea', {
       className: 'form-textarea',
       placeholder: '分类描述',
-      onChange: (e) => { cat.description = e.target.value; },
+      onChange: (e) => {
+        cat.description = e.target.value;
+        charCount.textContent = `${e.target.value.length} 字`;
+      },
     }, cat.description || '');
     descInput.style.minHeight = '60px';
 
-    item.append(itemHeader, row1, formGroup('描述', descInput));
+    descGroup.append(descLabelRow, descInput);
+
+    item.append(itemHeader, row1, descGroup);
     return item;
+  }
+
+  /** 校验 slug 唯一性，给输入框添加视觉提示 */
+  _validateSlugField(inputEl) {
+    const val = (inputEl.value || '').trim();
+    if (!val) {
+      inputEl.classList.remove('input-error');
+      return;
+    }
+    const dupCount = this.categories.filter((c) => c.slug === val).length;
+    if (dupCount > 1) {
+      inputEl.classList.add('input-error');
+    } else {
+      inputEl.classList.remove('input-error');
+    }
   }
 
   _escape(str) {
@@ -187,6 +233,21 @@ export function getCategory(slug: string): Category | undefined {
   }
 
   async _save(body) {
+    // slug 唯一性校验
+    const slugs = this.categories.map((c) => (c.slug || '').trim()).filter(Boolean);
+    const dupSlugs = slugs.filter((s, i) => slugs.indexOf(s) !== i);
+    if (dupSlugs.length > 0) {
+      this.toast.error(`分类标识重复：${dupSlugs.join(', ')}，请确保每个分类的 slug 唯一`);
+      return;
+    }
+
+    // slug 为空校验
+    const emptySlug = this.categories.findIndex((c) => !(c.slug || '').trim());
+    if (emptySlug >= 0) {
+      this.toast.error(`第 ${emptySlug + 1} 个分类的标识 (slug) 不能为空`);
+      return;
+    }
+
     const saveBtn = document.getElementById('cat-save-btn');
     saveBtn.disabled = true;
     saveBtn.textContent = '保存中...';

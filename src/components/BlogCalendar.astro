@@ -57,7 +57,7 @@ const isToday = (day: number) =>
 ---
 
 <div
-  class="blog-calendar card-kawaii p-5"
+  class="blog-calendar card-kawaii p-3"
   id="blog-calendar"
   data-mode={mode}
   data-dates={dateData}
@@ -238,20 +238,22 @@ const isToday = (day: number) =>
       activeBtn.closest('.cal-cell')?.classList.add('cal-active');
     }
 
-    // 更新 URL
+    // 更新 URL（保留 category 参数）
     const mStr = `${y}-${String(m).padStart(2, '0')}`;
-    const newUrl = `/blog/?month=${mStr}&day=${d}`;
-    history.replaceState(null, '', newUrl);
+    const url = new URL(window.location.href);
+    url.searchParams.set('month', mStr);
+    url.searchParams.set('day', String(d));
+    history.replaceState(null, '', url.toString());
 
-    // 筛选 PostCard 列表
-    const postItems = document.querySelectorAll('[data-post-date]');
+    // 筛选 PostCard 列表（日期匹配 → 显示；不匹配 → 隐藏）
+    const postItems = document.querySelectorAll<HTMLElement>('[data-post-date]');
     postItems.forEach((item) => {
-      const dateStr = (item as HTMLElement).dataset.postDate!; // "YYYY-M-D"
+      const dateStr = item.dataset.postDate!; // "YYYY-M-D"
       const [py, pm, pd] = dateStr.split('-').map(Number);
       if (py === y && pm === m && pd === d) {
-        (item as HTMLElement).style.display = '';
+        item.dataset.calVisible = '1';
       } else {
-        (item as HTMLElement).style.display = 'none';
+        item.dataset.calVisible = '0';
       }
     });
 
@@ -261,13 +263,18 @@ const isToday = (day: number) =>
       filterHint.innerHTML = `筛选：<span class="font-medium text-sakura-600">${y}年${m}月${d}日</span> · <a href="/blog/" class="text-sakura-600 hover:underline">清除筛选</a>`;
       filterHint.classList.remove('hidden');
     }
+
+    // 应用分类筛选（AND 逻辑）
+    if ((window as any).__applyCategoryFilter) {
+      (window as any).__applyCategoryFilter();
+    }
   }
 
   // 清除筛选（由外部按钮调用时）
   (window as any).__clearCalendarFilter = function () {
-    const postItems = document.querySelectorAll('[data-post-date]');
+    const postItems = document.querySelectorAll<HTMLElement>('[data-post-date]');
     postItems.forEach((item) => {
-      (item as HTMLElement).style.display = '';
+      item.dataset.calVisible = '1';
     });
     const filterHint = document.getElementById('cal-filter-hint');
     if (filterHint) filterHint.classList.add('hidden');
@@ -275,6 +282,11 @@ const isToday = (day: number) =>
       cell.classList.remove('cal-active');
     });
     history.replaceState(null, '', '/blog/');
+
+    // 应用分类筛选（AND 逻辑）
+    if ((window as any).__applyCategoryFilter) {
+      (window as any).__applyCategoryFilter();
+    }
   };
 
   // 上一月 / 下一月

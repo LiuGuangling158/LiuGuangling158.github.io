@@ -865,6 +865,90 @@
   color: #92400e;
 }
 
+/* ========== Category Preview Chip ========== */
+.cat-preview-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 12px;
+  border-radius: 14px;
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--color-sakura-600, #f06292);
+  background: linear-gradient(135deg, #fff0f5, #ffe4ef);
+  border: 1px solid #ffc9de;
+  white-space: nowrap;
+}
+
+/* ========== Character Count ========== */
+.char-count {
+  font-size: 0.75rem;
+  color: #a895b0;
+  font-weight: 400;
+}
+
+/* ========== Input Error State ========== */
+.form-input.input-error,
+.form-textarea.input-error {
+  border-color: #ef4444 !important;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1) !important;
+  background: #fff5f5;
+}
+
+/* ========== Image Drop Zones ========== */
+.cover-drop {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 60px;
+  margin-top: 8px;
+  border: 2px dashed #ffc9de;
+  border-radius: 12px;
+  background: #fffafc;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.cover-drop:hover {
+  border-color: #f06292;
+  background: #fff0f5;
+}
+
+.cover-drop.dragover {
+  border-color: #f06292;
+  background: #ffe4ef;
+  border-style: solid;
+  box-shadow: 0 0 0 3px rgba(240, 98, 146, 0.12);
+}
+
+.cover-drop.uploading {
+  pointer-events: none;
+  opacity: 0.7;
+  border-color: #ffc9de;
+  background: #fff0f5;
+}
+
+.cover-drop-text {
+  font-size: 0.825rem;
+  color: #c997b0;
+  pointer-events: none;
+}
+
+.cover-preview {
+  margin-top: 8px;
+  max-width: 200px;
+  max-height: 120px;
+  border-radius: 8px;
+  border: 1px solid #ffe4ef;
+  object-fit: cover;
+}
+
+/* textarea 拖入高亮 */
+.textarea-dragover {
+  border-color: #f06292 !important;
+  box-shadow: inset 0 0 0 3px rgba(240, 98, 146, 0.15) !important;
+  background: #fff5f8 !important;
+}
+
 /* ========== Utility ========== */
 .admin-text-muted {
   color: #8b7f96;

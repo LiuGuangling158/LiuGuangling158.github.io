@@ -1,0 +1,338 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import type { Category } from '../config/categories';
+
+interface Props {
+  posts: CollectionEntry<'blog'>[];
+  categories: Category[];
+  mode?: 'blog' | 'home';
+}
+
+const { posts, categories, mode = 'blog' } = Astro.props;
+
+// 统计每个分类的文章数
+const categoryCounts = new Map<string, number>();
+for (const post of posts) {
+  const cat = post.data.category;
+  if (cat) {
+    categoryCounts.set(cat, (categoryCounts.get(cat) ?? 0) + 1);
+  }
+}
+const totalCount = posts.length;
+
+// 构建分类数据的 JSON（供客户端 JS 使用）
+const categoryData = JSON.stringify(
+  categories.map((c) => ({
+    slug: c.slug,
+    name: c.name,
+    description: c.description,
+    count: categoryCounts.get(c.slug) ?? 0,
+  }))
+);
+---
+
+<div
+  class="category-filter-card card-kawaii"
+  id="category-filter"
+  data-mode={mode}
+  data-categories={categoryData}
+>
+  <!-- 标题 -->
+  <div class="cat-card-header">
+    <svg class="cat-card-header-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+      <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+    </svg>
+    <span>分类筛选</span>
+    <span class="cat-card-selected" id="cat-selected-label"></span>
+  </div>
+
+  <!-- 分类小卡片列表 -->
+  <div class="cat-card-grid" id="cat-chips">
+    <button class="cat-mini-card is-active" data-category="">
+      <span class="cat-mini-name">全部文章</span>
+      <span class="cat-mini-count">{totalCount}</span>
+    </button>
+    {categories.map((c) => {
+      const count = categoryCounts.get(c.slug) ?? 0;
+      return (
+        <button class:list={['cat-mini-card', count === 0 && 'is-empty']} data-category={c.slug}>
+          <span class="cat-mini-name">{c.name}</span>
+          <span class="cat-mini-count">{count}</span>
+          <span class="cat-mini-desc">{c.description.slice(0, 20)}{c.description.length > 20 ? '…' : ''}</span>
+        </button>
+      );
+    })}
+  </div>
+</div>
+
+<script>
+(function () {
+  const root = document.getElementById('category-filter')!;
+  if (!root) return;
+
+  const mode = root.dataset.mode!;
+  const categories = JSON.parse(root.dataset.categories!);
+
+  const chips = document.getElementById('cat-chips')!;
+  const selectedLabel = document.getElementById('cat-selected-label')!;
+
+  let selectedCategory = '';
+
+  function isCalHidden(el: HTMLElement): boolean {
+    return el.dataset.calVisible === '0';
+  }
+
+  function matchesCategory(postEl: HTMLElement): boolean {
+    if (!selectedCategory) return true;
+    const cat = postEl.dataset.category || '';
+    return cat === selectedCategory;
+  }
+
+  function applyFilter() {
+    if (mode === 'blog') {
+      const postItems = document.querySelectorAll<HTMLElement>('[data-post-date]');
+      postItems.forEach((item) => {
+        const calHidden = isCalHidden(item);
+        const catMatch = matchesCategory(item);
+        item.style.display = (!calHidden && catMatch) ? '' : 'none';
+      });
+    } else if (mode === 'home') {
+      const postItems = document.querySelectorAll<HTMLElement>('.date-timeline-posts li[data-category]');
+      postItems.forEach((item) => {
+        const catMatch = matchesCategory(item);
+        item.style.display = catMatch ? '' : 'none';
+      });
+
+      // 隐藏空日期组
+      const dateItems = document.querySelectorAll<HTMLElement>('.date-timeline-item');
+      dateItems.forEach((dateItem) => {
+        const visiblePosts = dateItem.querySelectorAll<HTMLElement>('.date-timeline-posts li[data-category]');
+        let hasVisible = false;
+        visiblePosts.forEach((p) => {
+          if ((p as HTMLElement).style.display !== 'none') hasVisible = true;
+        });
+        dateItem.style.display = hasVisible ? '' : 'none';
+      });
+    }
+  }
+
+  // 暴露全局接口，供日历筛选时调用（AND 逻辑）
+  (window as any).__applyCategoryFilter = function () {
+    applyFilter();
+  };
+
+  // 点击分类小卡片
+  chips.addEventListener('click', (e) => {
+    const card = (e.target as HTMLElement).closest('.cat-mini-card') as HTMLElement;
+    if (!card) return;
+
+    const cat = card.dataset.category || '';
+
+    if (cat === selectedCategory) {
+      // 再次点击 → 取消选择 → 回到"全部"
+      selectedCategory = '';
+      chips.querySelectorAll('.cat-mini-card').forEach((c) => c.classList.remove('is-active'));
+      chips.querySelector('.cat-mini-card[data-category=""]')?.classList.add('is-active');
+      selectedLabel.textContent = '';
+    } else {
+      selectedCategory = cat;
+      chips.querySelectorAll('.cat-mini-card').forEach((c) => c.classList.remove('is-active'));
+      card.classList.add('is-active');
+      // 显示选中的分类名
+      const nameEl = card.querySelector('.cat-mini-name');
+      selectedLabel.textContent = '· ' + (nameEl?.textContent || '');
+    }
+
+    // 更新 URL
+    if (mode === 'blog') {
+      const url = new URL(window.location.href);
+      if (selectedCategory) {
+        url.searchParams.set('category', selectedCategory);
+      } else {
+        url.searchParams.delete('category');
+      }
+      history.replaceState(null, '', url.toString());
+    }
+
+    applyFilter();
+  });
+
+  // 恢复 URL 中的分类筛选状态
+  if (mode === 'blog') {
+    const url = new URL(window.location.href);
+    const catParam = url.searchParams.get('category');
+    if (catParam) {
+      selectedCategory = catParam;
+      setTimeout(() => {
+        const targetCard = chips.querySelector(`.cat-mini-card[data-category="${catParam}"]`) as HTMLElement;
+        if (targetCard) {
+          chips.querySelectorAll('.cat-mini-card').forEach((c) => c.classList.remove('is-active'));
+          targetCard.classList.add('is-active');
+          const nameEl = targetCard.querySelector('.cat-mini-name');
+          selectedLabel.textContent = '· ' + (nameEl?.textContent || '');
+          applyFilter();
+        }
+      }, 100);
+    }
+  }
+})();
+</script>
+
+<style>
+  .category-filter-card {
+    overflow: hidden;
+    height: fit-content;
+  }
+
+  .cat-card-header {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 12px 16px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--color-ink);
+    border-bottom: 1px solid var(--color-sakura-100);
+  }
+
+  .cat-card-header-icon {
+    color: var(--color-sakura-500);
+    flex-shrink: 0;
+  }
+
+  .cat-card-selected {
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--color-sakura-600);
+  }
+
+  .cat-card-selected:empty {
+    display: none;
+  }
+
+  .cat-card-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    padding: 12px 14px;
+  }
+
+  @media (max-width: 480px) {
+    .cat-card-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* 分类小卡片 */
+  .cat-mini-card {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 3px;
+    padding: 10px 12px;
+    border-radius: 12px;
+    border: 1.5px solid var(--color-sakura-150, #ffe0ee);
+    background: var(--color-sakura-50);
+    cursor: pointer;
+    font-family: inherit;
+    text-align: left;
+    transition: all 0.2s ease;
+    position: relative;
+  }
+
+  .cat-mini-card:hover {
+    border-color: var(--color-sakura-400);
+    background: var(--color-sakura-100);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(240, 98, 146, 0.12);
+  }
+
+  .cat-mini-card.is-active {
+    background: linear-gradient(135deg, var(--color-sakura-400), var(--color-sakura-500));
+    border-color: transparent;
+    color: white;
+    box-shadow: 0 3px 12px rgba(240, 98, 146, 0.25);
+  }
+
+  .cat-mini-card.is-active .cat-mini-name,
+  .cat-mini-card.is-active .cat-mini-desc {
+    color: rgba(255, 255, 255, 0.9);
+  }
+
+  .cat-mini-card.is-active .cat-mini-count {
+    background: rgba(255, 255, 255, 0.3);
+    color: white;
+  }
+
+  .cat-mini-card.is-empty {
+    opacity: 0.45;
+    pointer-events: none;
+  }
+
+  .cat-mini-name {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--color-ink);
+    line-height: 1.3;
+  }
+
+  .cat-mini-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 20px;
+    height: 18px;
+    padding: 0 6px;
+    border-radius: 9px;
+    font-size: 0.68rem;
+    font-weight: 700;
+    background: var(--color-sakura-100);
+    color: var(--color-sakura-600);
+    position: absolute;
+    top: 8px;
+    right: 10px;
+  }
+
+  .cat-mini-desc {
+    font-size: 0.7rem;
+    color: var(--color-ink-muted);
+    line-height: 1.3;
+    padding-right: 24px;
+  }
+
+  /* "全部文章" 卡片特殊样式 */
+  .cat-mini-card[data-category=""] {
+    grid-column: 1 / -1;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 14px;
+    background: linear-gradient(135deg, #f8f7ff, #ede9fe);
+    border-color: #c4b5fd;
+  }
+
+  .cat-mini-card[data-category=""] .cat-mini-name {
+    color: #7c3aed;
+  }
+
+  .cat-mini-card[data-category=""] .cat-mini-count {
+    position: static;
+    background: #c4b5fd;
+    color: #5b21b6;
+  }
+
+  .cat-mini-card[data-category=""].is-active {
+    background: linear-gradient(135deg, #a78bfa, #7c3aed);
+    border-color: transparent;
+  }
+
+  .cat-mini-card[data-category=""].is-active .cat-mini-name {
+    color: white;
+  }
+
+  .cat-mini-card[data-category=""].is-active .cat-mini-count {
+    background: rgba(255, 255, 255, 0.3);
+    color: white;
+  }
+</style>

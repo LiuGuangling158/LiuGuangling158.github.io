@@ -4,7 +4,9 @@ import HeroSlideshow from '../components/HeroSlideshow.astro';
 import SkillBadges from '../components/SkillBadges.astro';
 import GitHubCard from '../components/GitHubCard.astro';
 import BlogCalendar from '../components/BlogCalendar.astro';
+import CategoryFilter from '../components/CategoryFilter.astro';
 import DateTimeline from '../components/DateTimeline.astro';
+import { categories } from '../config/categories';
 import { getCollection } from 'astro:content';
 const allPosts = await getCollection('blog', ({ data }) => !data.draft);
 ---
@@ -56,9 +58,14 @@ const allPosts = await getCollection('blog', ({ data }) => !data.draft);
       <a href="/blog/" class="btn-kawaii text-sm">全部文章</a>
     </header>
 
-    <!-- 可视化日历 -->
-    <div class="mb-8">
-      <BlogCalendar posts={allPosts} mode="home" />
+    <!-- 日历 + 分类筛选 并排 -->
+    <div class="filter-row mb-6">
+      <div class="filter-col-cal">
+        <BlogCalendar posts={allPosts} mode="home" />
+      </div>
+      <div class="filter-col-cat">
+        <CategoryFilter posts={allPosts} categories={categories} mode="home" />
+      </div>
     </div>
 
     <DateTimeline posts={allPosts} />
@@ -117,5 +124,32 @@ const allPosts = await getCollection('blog', ({ data }) => !data.draft);
   .blog-section {
     border-top: 1px solid var(--color-sakura-200);
     padding-top: 2.5rem;
+  }
+
+  .filter-row {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+    align-items: start;
+  }
+
+  @media (min-width: 768px) {
+    .filter-row {
+      grid-template-columns: 320px 1fr;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .filter-row {
+      grid-template-columns: 340px 1fr;
+    }
+  }
+
+  .filter-col-cal {
+    min-width: 0;
+  }
+
+  .filter-col-cat {
+    min-width: 0;
   }
 </style>

@@ -127,6 +127,42 @@ export class ApiClient {
   }
 
   /**
+   * 上传图片文件到仓库
+   * @param {File} file - 图片文件
+   * @param {string} repoPath - 仓库中的目标路径（如 public/images/posts/2026-06-07-abc.png）
+   * @returns {Promise<string>} - 公开访问 URL 路径（如 /images/posts/2026-06-07-abc.png）
+   */
+  async uploadImage(file, repoPath) {
+    // 读取文件为 base64
+    const base64 = await new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        // 去掉 data:image/...;base64, 前缀
+        const result = reader.result;
+        const comma = result.indexOf(',');
+        resolve(result.slice(comma + 1));
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+
+    // 通过 GitHub Contents API 上传
+    const res = await fetch(`${this.#baseUrl}/${repoPath}`, {
+      method: 'PUT',
+      headers: { ...this.#headers(), 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        message: `上传图片：${repoPath}`,
+        content: base64,
+      }),
+    });
+    await this.#handleResponse(res);
+
+    // 将仓库路径转为公开 URL（public/ 目录对应网站根目录）
+    const publicUrl = '/' + repoPath.replace(/^public\//, '');
+    return publicUrl;
+  }
+
+  /**
    * 验证 token 有效性
    * @returns {Promise<{login: string, avatar_url: string}>}
    */

@@ -288,6 +288,9 @@ body {
 
 .date-timeline-date {
   @apply flex flex-col items-center justify-center p-4 text-center sm:sticky sm:top-24 sm:self-start;
+  box-shadow:
+    0 2px 12px rgba(240, 98, 146, 0.08),
+    0 1px 0 rgba(255, 255, 255, 0.9) inset;
 }
 
 .date-timeline-day {
@@ -311,7 +314,18 @@ body {
 }
 
 .date-timeline-post {
-  @apply flex items-start gap-3 p-4 transition hover:-translate-y-0.5 hover:shadow-xl;
+  @apply flex items-start gap-3 p-4 transition hover:-translate-y-0.5;
+  box-shadow:
+    0 1px 3px rgba(240, 98, 146, 0.06),
+    0 4px 16px rgba(240, 98, 146, 0.04),
+    0 1px 0 rgba(255, 255, 255, 0.9) inset;
+}
+
+.date-timeline-post:hover {
+  box-shadow:
+    0 2px 8px rgba(240, 98, 146, 0.12),
+    0 8px 28px rgba(240, 98, 146, 0.08),
+    0 1px 0 rgba(255, 255, 255, 0.9) inset;
 }
 
 .date-timeline-badge {
@@ -331,15 +345,34 @@ body {
 }
 
 .date-timeline-post-title {
-  @apply font-bold text-ink;
+  @apply font-bold text-ink transition-colors;
+}
+
+.date-timeline-post:hover .date-timeline-post-title {
+  @apply text-sakura-600;
 }
 
 .date-timeline-post-desc {
   @apply line-clamp-2 text-sm text-ink-muted;
 }
 
+.date-timeline-post-meta-row {
+  @apply flex items-center gap-3 flex-wrap;
+}
+
 .date-timeline-post-time {
   @apply text-xs text-ink-muted;
+}
+
+.date-timeline-post-cat {
+  display: inline-block;
+  padding: 1px 8px;
+  border-radius: 10px;
+  font-size: 0.68rem;
+  font-weight: 500;
+  color: var(--color-sakura-500);
+  background: linear-gradient(135deg, var(--color-sakura-50), var(--color-sakura-100));
+  border: 1px solid var(--color-sakura-200);
 }
 
 .date-timeline-arrow {
@@ -353,42 +386,43 @@ body {
 /* —— 博客日历 —— */
 .blog-calendar {
   @apply select-none;
+  max-width: 360px;
 }
 
 .cal-header {
-  @apply mb-4 flex items-center justify-between;
+  @apply mb-2 flex items-center justify-between;
 }
 
 .cal-nav-btn {
-  @apply flex h-9 w-9 items-center justify-center rounded-full text-lg text-sakura-500 transition hover:bg-sakura-100 hover:text-sakura-600;
+  @apply flex h-7 w-7 items-center justify-center rounded-full text-sm text-sakura-500 transition hover:bg-sakura-100 hover:text-sakura-600;
 }
 
 .cal-title-wrap {
-  @apply flex items-center gap-3;
+  @apply flex items-center gap-2;
 }
 
 .cal-title {
-  @apply text-lg font-bold text-ink;
+  @apply text-base font-bold text-ink;
 }
 
 .cal-total {
-  @apply rounded-full bg-sakura-100 px-2.5 py-0.5 text-xs font-medium text-sakura-600;
+  @apply rounded-full bg-sakura-100 px-1.5 py-0.5 text-[0.65rem] font-medium text-sakura-600;
 }
 
 .cal-weekdays {
-  @apply mb-2 grid grid-cols-7 text-center;
+  @apply mb-1 grid grid-cols-7 text-center;
 }
 
 .cal-weekday {
-  @apply py-1 text-xs font-medium text-ink-muted;
+  @apply py-0.5 text-[0.65rem] font-medium text-ink-muted;
 }
 
 .cal-grid {
-  @apply grid grid-cols-7 gap-1;
+  @apply grid grid-cols-7 gap-0.5;
 }
 
 .cal-cell {
-  @apply relative flex aspect-square items-center justify-center rounded-xl transition;
+  @apply relative flex aspect-square items-center justify-center rounded-lg transition;
 }
 
 .cal-cell.is-empty {
@@ -404,11 +438,11 @@ body {
 }
 
 .cal-day-link {
-  @apply relative flex h-full w-full flex-col items-center justify-center rounded-xl transition hover:bg-sakura-100;
+  @apply relative flex h-full w-full flex-col items-center justify-center rounded-lg transition hover:bg-sakura-100;
 }
 
 .cal-day-num {
-  @apply text-sm font-medium text-ink;
+  @apply text-xs font-medium text-ink;
 }
 
 .cal-day-muted {
@@ -424,7 +458,7 @@ body {
 }
 
 .cal-dot {
-  @apply mt-0.5 inline-block h-1.5 w-1.5 rounded-full bg-sakura-400;
+  @apply mt-0.5 inline-block h-1 w-1 rounded-full bg-sakura-400;
 }
 
 /* 多篇文章时增大圆点 */
@@ -433,7 +467,7 @@ body {
 }
 
 .cal-legend {
-  @apply mt-4 flex items-center justify-center gap-4 text-xs text-ink-muted;
+  @apply mt-2 flex items-center justify-center gap-2 text-[0.65rem] text-ink-muted;
 }
 
 .cal-legend-item {
@@ -441,11 +475,11 @@ body {
 }
 
 .cal-dot-sample {
-  @apply inline-block h-2 w-2 rounded-full bg-sakura-400;
+  @apply inline-block h-1.5 w-1.5 rounded-full bg-sakura-400;
 }
 
 .cal-today-sample {
-  @apply inline-block h-2.5 w-2.5 rounded ring-2 ring-sakura-400/60;
+  @apply inline-block h-2 w-2 rounded ring-2 ring-sakura-400/60;
 }
 
 .cal-cell.cal-active {

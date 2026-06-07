@@ -223,7 +223,7 @@ export class PostsSection {
       formGroup('发布日期 *', pubDateInput),
       formGroup('更新日期', updDateInput),
       formGroup('分类', catInput),
-      formGroup('封面图片', coverInput),
+      this._renderCoverGroup(fm),
       el('div', { className: 'form-group' }, draftCheckLabel),
       formGroup('文件名', filenameInput, '留空则根据标题和日期自动生成'),
     );
@@ -259,6 +259,9 @@ export class PostsSection {
     preview.style.flex = '1';
 
     bodyPanel.append(toolbar, textarea, preview);
+
+    // 绑定图片拖拽/粘贴事件
+    this._setupEditorImageUpload(textarea);
 
     const _switchMode = (mode) => {
       document.querySelectorAll('.post-editor-tab').forEach((t) => t.classList.toggle('active', t.dataset.mode === mode));
@@ -465,5 +468,210 @@ export class PostsSection {
     const div = document.createElement('div');
     div.textContent = String(str);
     return div.innerHTML;
+  }
+
+  /** 生成唯一图片文件名 */
+  _generateImageFilename(file) {
+    const now = new Date();
+    const dateStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+    const rand = Math.random().toString(36).slice(2, 8);
+    const ext = file.name.split('.').pop().toLowerCase() || 'png';
+    return `${dateStr}-${rand}.${ext}`;
+  }
+
+  /** 上传图片到指定子目录，返回公开 URL */
+  async _uploadImage(file, subdir) {
+    const filename = this._generateImageFilename(file);
+    const repoPath = `public/images/${subdir}/${filename}`;
+    return await this.api.uploadImage(file, repoPath);
+  }
+
+  /** 在 textarea 光标位置插入文本 */
+  _insertAtCursor(textarea, text) {
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const before = textarea.value.slice(0, start);
+    const after = textarea.value.slice(end);
+    textarea.value = before + text + after;
+    // 光标移到插入文本之后
+    textarea.selectionStart = textarea.selectionEnd = start + text.length;
+    textarea.focus();
+    // 触发 input 事件以便预览同步
+    textarea.dispatchEvent(new Event('input', { bubbles: true }));
+  }
+
+  /** 渲染封面图表单组（输入框 + 拖拽区 + 预览） */
+  _renderCoverGroup(fm) {
+    const group = el('div', { className: 'form-group' });
+    group.appendChild(el('label', { className: 'form-label' }, '封面图片'));
+
+    // 输入框行
+    const inputRow = el('div', { style: 'display: flex; gap: 8px;' });
+    const coverInput = el('input', {
+      className: 'form-input',
+      type: 'text',
+      id: 'fm-cover',
+      value: fm.cover || '',
+      placeholder: '封面图片路径（可选，也可拖拽上传）',
+    });
+    coverInput.style.flex = '1';
+    inputRow.appendChild(coverInput);
+    group.appendChild(inputRow);
+
+    // 已有时显示预览
+    if (fm.cover) {
+      const preview = el('img', {
+        className: 'cover-preview',
+        src: fm.cover,
+        alt: '封面预览',
+      });
+      preview.style.cssText = 'margin-top: 8px; max-width: 200px; max-height: 120px; border-radius: 8px; border: 1px solid #ffe4ef; object-fit: cover;';
+      group.appendChild(preview);
+    }
+
+    // 拖拽上传区
+    const dropZone = el('div', { className: 'cover-drop', id: 'cover-drop-zone' });
+    const dropText = el('span', { className: 'cover-drop-text' }, '🖼 拖拽图片到此处或点击上传');
+    dropZone.appendChild(dropText);
+
+    const _self = this;
+
+    // 点击触发文件选择
+    dropZone.addEventListener('click', () => {
+      const fileInput = document.createElement('input');
+      fileInput.type = 'file';
+      fileInput.accept = 'image/*';
+      fileInput.onchange = async () => {
+        const file = fileInput.files[0];
+        if (file) await _handleCoverUpload(file);
+      };
+      fileInput.click();
+    });
+
+    // 拖拽事件
+    dropZone.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      dropZone.classList.add('dragover');
+    });
+    dropZone.addEventListener('dragleave', () => {
+      dropZone.classList.remove('dragover');
+    });
+    dropZone.addEventListener('drop', async (e) => {
+      e.preventDefault();
+      dropZone.classList.remove('dragover');
+      const file = e.dataTransfer.files[0];
+      if (file && file.type.startsWith('image/')) {
+        await _handleCoverUpload(file);
+      }
+    });
+
+    async function _handleCoverUpload(file) {
+      dropZone.classList.add('uploading');
+      dropText.textContent = '⏳ 上传中...';
+      try {
+        const url = await _self._uploadImage(file, 'covers');
+        coverInput.value = url;
+        // 更新预览
+        const oldPreview = group.querySelector('.cover-preview');
+        if (oldPreview) oldPreview.remove();
+        const newPreview = el('img', {
+          className: 'cover-preview',
+          src: url,
+          alt: '封面预览',
+        });
+        newPreview.style.cssText = 'margin-top: 8px; max-width: 200px; max-height: 120px; border-radius: 8px; border: 1px solid #ffe4ef; object-fit: cover;';
+        group.appendChild(newPreview);
+        _self.toast.success('封面上传成功！');
+      } catch (err) {
+        _self.toast.error(`封面上传失败：${err.message}`);
+      } finally {
+        dropZone.classList.remove('uploading');
+        dropText.textContent = '🖼 拖拽图片到此处或点击上传';
+      }
+    }
+
+    group.appendChild(dropZone);
+    return group;
+  }
+
+  /** 为 Markdown 编辑器绑定图片拖拽/粘贴事件 */
+  _setupEditorImageUpload(textarea) {
+    const _self = this;
+
+    // Ctrl+V 粘贴图片
+    textarea.addEventListener('paste', async (e) => {
+      const items = e.clipboardData?.items;
+      if (!items) return;
+
+      for (const item of items) {
+        if (item.type.startsWith('image/')) {
+          e.preventDefault();
+          const file = item.getAsFile();
+          if (!file) continue;
+
+          const placeholder = '[上传中...]';
+          _self._insertAtCursor(textarea, placeholder);
+          const placeholderPos = textarea.selectionStart;
+
+          try {
+            const url = await _self._uploadImage(file, 'posts');
+            const mdImg = `![图片](${url})`;
+            // 替换占位符
+            const before = textarea.value.slice(0, placeholderPos - placeholder.length);
+            const after = textarea.value.slice(placeholderPos);
+            textarea.value = before + mdImg + after;
+            textarea.selectionStart = textarea.selectionEnd = before.length + mdImg.length;
+            textarea.dispatchEvent(new Event('input', { bubbles: true }));
+            _self.toast.success('图片已粘贴');
+          } catch (err) {
+            // 移除占位符
+            const before = textarea.value.slice(0, placeholderPos - placeholder.length);
+            const after = textarea.value.slice(placeholderPos);
+            textarea.value = before + after;
+            textarea.selectionStart = textarea.selectionEnd = before.length;
+            textarea.dispatchEvent(new Event('input', { bubbles: true }));
+            _self.toast.error(`图片上传失败：${err.message}`);
+          }
+          break;
+        }
+      }
+    });
+
+    // 拖拽图片到编辑器
+    textarea.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      textarea.classList.add('textarea-dragover');
+    });
+    textarea.addEventListener('dragleave', () => {
+      textarea.classList.remove('textarea-dragover');
+    });
+    textarea.addEventListener('drop', async (e) => {
+      e.preventDefault();
+      textarea.classList.remove('textarea-dragover');
+      const file = e.dataTransfer?.files[0];
+      if (!file || !file.type.startsWith('image/')) return;
+
+      const placeholder = '[上传中...]';
+      _self._insertAtCursor(textarea, placeholder);
+      const placeholderPos = textarea.selectionStart;
+
+      try {
+        const url = await _self._uploadImage(file, 'posts');
+        const mdImg = `![图片](${url})`;
+        const before = textarea.value.slice(0, placeholderPos - placeholder.length);
+        const after = textarea.value.slice(placeholderPos);
+        textarea.value = before + mdImg + after;
+        textarea.selectionStart = textarea.selectionEnd = before.length + mdImg.length;
+        textarea.dispatchEvent(new Event('input', { bubbles: true }));
+        _self.toast.success('图片已上传');
+      } catch (err) {
+        const before = textarea.value.slice(0, placeholderPos - placeholder.length);
+        const after = textarea.value.slice(placeholderPos);
+        textarea.value = before + after;
+        textarea.selectionStart = textarea.selectionEnd = before.length;
+        textarea.dispatchEvent(new Event('input', { bubbles: true }));
+        _self.toast.error(`图片上传失败：${err.message}`);
+      }
+    });
   }
 }

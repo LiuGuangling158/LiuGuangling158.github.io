@@ -53,7 +53,7 @@ const monthFmt = new Intl.DateTimeFormat('zh-CN', { month: 'long' });
                 const displayDate = getPostDisplayDate(post);
 
                 return (
-                  <li>
+                  <li data-category={post.data.category || ''}>
                     <a href={href} class="date-timeline-post group card-kawaii">
                       <span
                         class:list={[
@@ -72,15 +72,20 @@ const monthFmt = new Intl.DateTimeFormat('zh-CN', { month: 'long' });
                             {post.data.description}
                           </span>
                         )}
-                        <time
-                          class="date-timeline-post-time"
-                          datetime={displayDate.toISOString()}
-                        >
-                          {displayDate.toLocaleTimeString('zh-CN', {
-                            hour: '2-digit',
-                            minute: '2-digit',
-                          })}
-                        </time>
+                        <span class="date-timeline-post-meta-row">
+                          <time
+                            class="date-timeline-post-time"
+                            datetime={displayDate.toISOString()}
+                          >
+                            {displayDate.toLocaleTimeString('zh-CN', {
+                              hour: '2-digit',
+                              minute: '2-digit',
+                            })}
+                          </time>
+                          {post.data.category && (
+                            <span class="date-timeline-post-cat">{post.data.category}</span>
+                          )}
+                        </span>
                       </span>
                       <span class="date-timeline-arrow" aria-hidden="true">
                         →

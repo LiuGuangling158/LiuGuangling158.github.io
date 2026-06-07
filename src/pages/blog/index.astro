@@ -2,8 +2,10 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import PostCard from '../../components/PostCard.astro';
 import BlogCalendar from '../../components/BlogCalendar.astro';
+import CategoryFilter from '../../components/CategoryFilter.astro';
 import { getCollection } from 'astro:content';
 import { site } from '../../config/site';
+import { categories } from '../../config/categories';
 import { getPostDisplayDate } from '../../utils/groupPostsByDate';
 
 const monthParam = Astro.url.searchParams.get('month'); // 仅用于日历初始月份
@@ -35,18 +37,51 @@ function postDateKey(post: (typeof posts)[number]): string {
     </p>
   </header>
 
-  <!-- 日历 -->
-  <div class="mb-6">
-    <BlogCalendar posts={allPosts} month={monthParam ?? undefined} mode="blog" />
-    <!-- 筛选状态提示（客户端填充） -->
-    <p id="cal-filter-hint" class="mt-3 hidden text-sm text-ink-muted"></p>
+  <!-- 日历 + 分类筛选 并排 -->
+  <div class="filter-row mb-6">
+    <div class="filter-col-cal">
+      <BlogCalendar posts={allPosts} month={monthParam ?? undefined} mode="blog" />
+      <p id="cal-filter-hint" class="mt-2 hidden text-sm text-ink-muted"></p>
+    </div>
+    <div class="filter-col-cat">
+      <CategoryFilter posts={allPosts} categories={categories} mode="blog" />
+    </div>
   </div>
 
-  <ul class="flex flex-col gap-5" id="post-list">
+  <ul class="flex flex-col gap-4" id="post-list">
     {posts.map((post) => (
-      <li data-post-date={postDateKey(post)}>
+      <li data-post-date={postDateKey(post)} data-category={post.data.category || ''}>
         <PostCard post={post} />
       </li>
     ))}
   </ul>
 </BaseLayout>
+
+<style>
+  .filter-row {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+    align-items: start;
+  }
+
+  @media (min-width: 768px) {
+    .filter-row {
+      grid-template-columns: 320px 1fr;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .filter-row {
+      grid-template-columns: 340px 1fr;
+    }
+  }
+
+  .filter-col-cal {
+    min-width: 0;
+  }
+
+  .filter-col-cat {
+    min-width: 0;
+  }
+</style>
