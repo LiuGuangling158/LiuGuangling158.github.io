@@ -507,9 +507,10 @@ body {
 /* —— 文章封面大图 —— */
 .post-cover-hero {
   width: 100%;
-  max-height: 420px;
-  object-fit: cover;
+  max-height: 480px;
+  object-fit: contain;
   display: block;
+  background: #fdf6f9;
 }
 
 /* —— 文章正文双栏布局 —— */
