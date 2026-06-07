@@ -288,7 +288,9 @@ export class PostsSection {
     const pubDate = document.getElementById('fm-pubdate').value;
     const updatedDate = document.getElementById('fm-upddate').value;
     const category = document.getElementById('fm-category').value.trim();
-    const cover = document.getElementById('fm-cover').value.trim();
+    const coverEl = document.getElementById('fm-cover');
+    const cover = coverEl ? coverEl.value.trim() : '';
+    if (!coverEl) console.warn('[posts.js] #fm-cover 元素未找到 — 封面将不会写入 frontmatter');
     const draft = document.getElementById('fm-draft').checked;
     const body = document.getElementById('fm-body').value;
     let filename = document.getElementById('fm-filename').value.trim();
