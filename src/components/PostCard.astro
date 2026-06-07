@@ -6,7 +6,7 @@ interface Props {
 }
 
 const { post } = Astro.props;
-const { title, description, pubDate, category } = post.data;
+const { title, description, pubDate, category, cover } = post.data;
 const href = `/blog/${post.id}/`;
 const dateStr = pubDate.toLocaleDateString('zh-CN', {
   year: 'numeric',
@@ -64,6 +64,18 @@ const dateStr = pubDate.toLocaleDateString('zh-CN', {
       </svg>
     </a>
   </div>
+
+  <!-- 封面缩略图 -->
+  {cover && (
+    <a href={href} class="post-card-cover-wrap">
+      <img
+        src={cover}
+        alt={title}
+        class="post-card-cover"
+        loading="lazy"
+      />
+    </a>
+  )}
 </article>
 
 <style>
@@ -200,5 +212,31 @@ const dateStr = pubDate.toLocaleDateString('zh-CN', {
 
   .post-card-readmore:hover svg {
     transform: translateX(2px);
+  }
+
+  /* 封面缩略图 */
+  .post-card-cover-wrap {
+    flex-shrink: 0;
+    width: 140px;
+    display: none;
+    overflow: hidden;
+    border-radius: 0 12px 12px 0;
+  }
+
+  @media (min-width: 640px) {
+    .post-card-cover-wrap {
+      display: block;
+    }
+  }
+
+  .post-card-cover {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+  }
+
+  .post-card:hover .post-card-cover {
+    transform: scale(1.06);
   }
 </style>

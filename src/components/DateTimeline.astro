@@ -87,6 +87,9 @@ const monthFmt = new Intl.DateTimeFormat('zh-CN', { month: 'long' });
                           )}
                         </span>
                       </span>
+                      {post.data.cover && (
+                        <img src={post.data.cover} alt="" class="date-timeline-post-cover" loading="lazy" />
+                      )}
                       <span class="date-timeline-arrow" aria-hidden="true">
                         →
                       </span>
