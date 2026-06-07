@@ -949,6 +949,123 @@
   background: #fff5f8 !important;
 }
 
+/* ========== Image Manager ========== */
+.img-mgr-upload {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 70px;
+  margin-bottom: 16px;
+  border: 2px dashed #ffc9de;
+  border-radius: 14px;
+  background: #fffafc;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.img-mgr-upload:hover {
+  border-color: #f06292;
+  background: #fff0f5;
+}
+
+.img-mgr-upload.dragover {
+  border-color: #f06292;
+  background: #ffe4ef;
+  border-style: solid;
+  box-shadow: 0 0 0 3px rgba(240, 98, 146, 0.12);
+}
+
+.img-mgr-upload.uploading {
+  pointer-events: none;
+  opacity: 0.7;
+}
+
+.img-mgr-upload-text {
+  font-size: 0.85rem;
+  color: #c997b0;
+  pointer-events: none;
+}
+
+.img-mgr-stats {
+  font-size: 0.8rem;
+  color: #8b7f96;
+  margin-bottom: 12px;
+}
+
+.img-mgr-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  gap: 14px;
+}
+
+.img-mgr-card {
+  display: flex;
+  flex-direction: column;
+  border-radius: 14px;
+  border: 1px solid var(--color-sakura-150, #ffe0ee);
+  background: white;
+  overflow: hidden;
+  transition: box-shadow 0.2s, transform 0.2s;
+}
+
+.img-mgr-card:hover {
+  box-shadow: 0 4px 16px rgba(240, 98, 146, 0.12);
+  transform: translateY(-2px);
+}
+
+.img-mgr-thumb {
+  width: 100%;
+  height: 120px;
+  object-fit: cover;
+  display: block;
+  background: #fff5f8;
+}
+
+.img-mgr-name {
+  display: block;
+  padding: 8px 10px 0;
+  font-size: 0.72rem;
+  color: #8b7f96;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.img-mgr-actions {
+  display: flex;
+  gap: 6px;
+  padding: 8px 10px 10px;
+}
+
+.img-mgr-btn {
+  flex: 1;
+  padding: 5px 6px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 0.7rem;
+  font-family: inherit;
+  cursor: pointer;
+  background: #fafafa;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+
+.img-mgr-btn:hover {
+  background: #f0f0f0;
+}
+
+.img-mgr-btn-copy:hover {
+  border-color: #a78bfa;
+  background: #f5f3ff;
+  color: #7c3aed;
+}
+
+.img-mgr-btn-del:hover {
+  border-color: #fca5a5;
+  background: #fef2f2;
+  color: #dc2626;
+}
+
 /* ========== Utility ========== */
 .admin-text-muted {
   color: #8b7f96;

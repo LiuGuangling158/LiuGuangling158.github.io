@@ -12,6 +12,7 @@ import { LinksSection } from './sections/links.js';
 import { CategoriesSection } from './sections/categories.js';
 import { SkillsSection } from './sections/skills.js';
 import { HeroSection } from './sections/hero.js';
+import { ImageManagerSection } from './sections/image-manager.js';
 import { el, clearContainer } from './utils/dom.js';
 
 class AdminApp {
@@ -61,6 +62,8 @@ class AdminApp {
       categories: new CategoriesSection(this.api, this.toast),
       skills: new SkillsSection(this.api, this.toast),
       hero: new HeroSection(this.api, this.toast),
+      'images-covers': new ImageManagerSection(this.api, this.toast, this.modal, 'public/images/covers', '封面图片管理', 'covers'),
+      'images-posts': new ImageManagerSection(this.api, this.toast, this.modal, 'public/images/posts', '文章插图管理', 'posts'),
     };
 
     this._renderShell();
@@ -95,6 +98,8 @@ class AdminApp {
       { id: 'categories', label: '📂 分类' },
       { id: 'skills', label: '🛠 技能' },
       { id: 'hero', label: '🖼 轮播' },
+      { id: 'images-covers', label: '🖼 封面图' },
+      { id: 'images-posts', label: '📷 插图' },
     ];
     tabs.forEach((tab) => {
       const tabEl = el('button', {
