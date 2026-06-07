@@ -202,7 +202,6 @@ export class PostsSection {
     const pubDateInput = el('input', { className: 'form-input', type: 'date', id: 'fm-pubdate', value: fm.pubDate ? this._toDateStr(fm.pubDate) : this._todayStr() });
     const updDateInput = el('input', { className: 'form-input', type: 'date', id: 'fm-upddate', value: fm.updatedDate ? this._toDateStr(fm.updatedDate) : '' });
     const catInput = el('input', { className: 'form-input', type: 'text', id: 'fm-category', value: fm.category || '', placeholder: '分类（默认：未分类）' });
-    const coverInput = el('input', { className: 'form-input', type: 'text', id: 'fm-cover', value: fm.cover || '', placeholder: '封面图片路径（可选）' });
 
     const draftCheckLabel = el('label', { className: 'form-check' });
     const draftCheck = el('input', { type: 'checkbox', id: 'fm-draft' });
