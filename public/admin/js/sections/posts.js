@@ -566,23 +566,36 @@ export class PostsSection {
     });
 
     async function _handleCoverUpload(file) {
+      // 先显示本地即时预览（上传到 GitHub 后文件不会立即可访问）
+      const blobUrl = URL.createObjectURL(file);
+      const oldPreview = group.querySelector('.cover-preview');
+      if (oldPreview) oldPreview.remove();
+      const tempPreview = el('img', {
+        className: 'cover-preview',
+        src: blobUrl,
+        alt: '封面预览（本地）',
+      });
+      tempPreview.style.cssText = 'margin-top: 8px; max-width: 200px; max-height: 120px; border-radius: 8px; border: 1px solid #ffe4ef; object-fit: cover;';
+      group.appendChild(tempPreview);
+
       dropZone.classList.add('uploading');
       dropText.textContent = '⏳ 上传中...';
       try {
         const url = await _self._uploadImage(file, 'covers');
         coverInput.value = url;
-        // 更新预览
-        const oldPreview = group.querySelector('.cover-preview');
-        if (oldPreview) oldPreview.remove();
-        const newPreview = el('img', {
-          className: 'cover-preview',
-          src: url,
-          alt: '封面预览',
-        });
-        newPreview.style.cssText = 'margin-top: 8px; max-width: 200px; max-height: 120px; border-radius: 8px; border: 1px solid #ffe4ef; object-fit: cover;';
-        group.appendChild(newPreview);
+        // 上传成功后释放 blob URL，切换到部署路径（本地 dev 可立即访问 public/）
+        URL.revokeObjectURL(blobUrl);
+        // 尝试加载部署路径，失败则保留 blob 预览
+        tempPreview.src = url;
+        tempPreview.alt = '封面预览';
+        tempPreview.onerror = () => {
+          // 部署路径不可访问，回退显示空状态
+          tempPreview.style.display = 'none';
+        };
         _self.toast.success('封面上传成功！');
       } catch (err) {
+        // 上传失败，保留 blob 预览
+        tempPreview.src = blobUrl;
         _self.toast.error(`封面上传失败：${err.message}`);
       } finally {
         dropZone.classList.remove('uploading');
