@@ -3,8 +3,9 @@ title: Java 基础语法 —— 学习记录
 description: 从零快速掌握 Java 基础语法，包括标准输入输出、变量与数据类型、运算符、控制流等核心知识点
 pubDate: 2026-06-07
 category: 编程学习记录
-cover: /images/covers/2026-06-07-3xxbwc.png
+cover: /images/covers/2026-06-07-yhfmxg.png
 ---
+
 Java 是一门面向对象的编程语言，它最大的特点是「一次编写，到处运行」：Java 代码编译成字节码后，可以在任何安装了 Java 虚拟机（JVM）的平台上运行，不用关心底层是 Windows、Mac 还是 Linux。
 
 Java 的语法和 C/C++ 比较像，但去掉了指针、手动内存管理这些容易出错的特性，新手上手会比 C++ 舒服很多。同时 Java 的标准库非常丰富，常用的数据结构都给你准备好了，拿来就能用。
