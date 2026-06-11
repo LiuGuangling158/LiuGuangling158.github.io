@@ -31,9 +31,9 @@ export const categories: Category[] = [
     description: '博客使用指南与各类教程分享',
   },
   {
-    slug: '随笔杂谈',
-    name: '随笔杂谈',
-    description: '个人随笔、公告与生活杂谈',
+    slug: 'AI技术',
+    name: 'AI技术',
+    description: '关于AI的学习记录',
   },
   {
     slug: '二次元杂谈',
