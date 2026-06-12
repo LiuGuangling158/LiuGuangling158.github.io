@@ -1,16 +1,8 @@
 ---
 title: 面向对象设计原则入门：SRP、OCP 与 DIP
 pubDate: 2026-06-12
----
-
----
-
-title: 面向对象设计原则入门：SRP、OCP 与 DIP
-description: 理解面向对象设计原则，掌握单一职责原则、开闭原则和依赖倒置原则的核心思想与实际应用
-pubDate: 2026-06-12
 category: 编程学习记录
-draft: false
-------------
+---
 
 # 面向对象设计原则入门：SRP、OCP 与 DIP
 
