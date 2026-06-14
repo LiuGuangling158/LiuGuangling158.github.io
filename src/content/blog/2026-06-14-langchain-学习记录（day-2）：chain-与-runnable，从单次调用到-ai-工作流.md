@@ -5,6 +5,7 @@ pubDate: 2026-06-14
 category: AI技术
 ---
 
+
 # LangChain 学习记录（Day 2）
 
 ## 学习目标
@@ -558,3 +559,6 @@ prompt | model
 目标：
 
 实现一个能够记住上下文的 AI 聊天助手。
+
+
+![笔记图片](/images/posts/2026-06-14-vwpwj0.png)
