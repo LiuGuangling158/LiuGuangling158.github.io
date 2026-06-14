@@ -25,3 +25,7 @@ pnpm-debug.log*
 
 # Claude Code
 CLAUDE.md
+
+.vscode
+
+.understand-anything
