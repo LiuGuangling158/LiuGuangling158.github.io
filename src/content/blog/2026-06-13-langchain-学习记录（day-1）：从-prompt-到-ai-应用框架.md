@@ -6,6 +6,7 @@ category: AI技术
 ---
 
 
+
 # LangChain 学习记录（Day 1）
 
 ## 学习目标
@@ -232,6 +233,5 @@ AI开发
 * Memory
 
 
-```
+
 ![图片笔记](/images/posts/2026-06-14-xvej2u.png)
-```
