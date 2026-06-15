@@ -1,0 +1,3598 @@
+{
+  "version": "1.0.0",
+  "project": {
+    "name": "liuguangling158.github.io",
+    "languages": [
+      "astro",
+      "css",
+      "javascript",
+      "json",
+      "markdown",
+      "powershell",
+      "typescript",
+      "unknown",
+      "yaml"
+    ],
+    "frameworks": [
+      "Astro",
+      "GitHub Actions",
+      "MDX",
+      "TailwindCSS"
+    ],
+    "description": "清新萌系粉白风格的個人博客，基于 Astro + TailwindCSS 构建，部署至 GitHub Pages。支持 Markdown/MDX 博客写作、在线管理后台、博客日历、分类归档、首页轮播、樱花飘落动画、技能徽章展示、友链页面、RSS/Sitemap 及 Giscus 评论系统。",
+    "analyzedAt": "2026-06-15T05:02:45.119Z",
+    "gitCommitHash": "4357c684b935e8756b0248dcc444119c68b5a812"
+  },
+  "nodes": [
+    {
+      "id": "file:public/admin/js/api.js",
+      "type": "file",
+      "name": "api.js",
+      "filePath": "public/admin/js/api.js",
+      "summary": "GitHub REST API 客户端封装，通过 GitHub Contents API 实现文件的读取、写入、删除、目录列表和图片上传等操作，使用 ES2022 私有字段保护凭据。",
+      "tags": [
+        "api-client",
+        "github-api",
+        "file-operations",
+        "service"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "使用 ES2022 私有字段（#privateField）封装 Token 和仓库信息；Unicode 安全的 Base64 编解码通过 TextEncoder/TextDecoder 实现。"
+    },
+    {
+      "id": "file:public/admin/js/main.js",
+      "type": "file",
+      "name": "main.js",
+      "filePath": "public/admin/js/main.js",
+      "summary": "管理后台应用入口，负责登录流程、标签页路由、各功能模块的初始化与切换，采用 SPA 模式在单页面内实现多标签管理。",
+      "tags": [
+        "entry-point",
+        "admin",
+        "spa",
+        "tab-routing"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "SPA 路由模式：基于 dataset 属性从 DOM 读取仓库配置，延迟加载各标签页 section 模块，首次切换时初始化。"
+    },
+    {
+      "id": "file:public/admin/js/modal.js",
+      "type": "file",
+      "name": "modal.js",
+      "filePath": "public/admin/js/modal.js",
+      "summary": "确认与提示弹窗组件，提供 confirm（确认/取消）和 alert（仅确认）两种模式，返回 Promise 供调用方等待用户操作结果，支持 ESC 键关闭和 CSS 过渡动画。",
+      "tags": [
+        "modal",
+        "ui-component",
+        "dialog",
+        "promise-based"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "基于 Promise 的弹窗模式：confirm/alert 返回 Promise，调用方通过 await 等待用户操作；支持 CSS 入场/退场动画和 ESC 快捷键。"
+    },
+    {
+      "id": "file:public/admin/js/sections/image-manager.js",
+      "type": "file",
+      "name": "image-manager.js",
+      "filePath": "public/admin/js/sections/image-manager.js",
+      "summary": "图片资源管理模块，支持浏览指定目录下的图片、拖拽/点击上传、复制图片路径及 Markdown 语法、删除图片等操作，适用于 covers 和 posts 两个图片目录。",
+      "tags": [
+        "image-manager",
+        "upload",
+        "file-management",
+        "admin-section"
+      ],
+      "complexity": "complex",
+      "languageNotes": "使用 HTML5 Drag and Drop API 实现拖拽上传；基于日期+随机字符串生成唯一文件名避免冲突；支持 navigator.clipboard 复制图片路径。"
+    },
+    {
+      "id": "file:public/admin/js/sections/site-config.js",
+      "type": "file",
+      "name": "site-config.js",
+      "filePath": "public/admin/js/sections/site-config.js",
+      "summary": "站点配置管理模块，通过解析 src/config/site.ts 中的站点信息和 Giscus 评论配置，渲染为可编辑表单，并将修改后的配置生成为 TypeScript 代码写回仓库。",
+      "tags": [
+        "site-config",
+        "config-editor",
+        "form-renderer",
+        "admin-section"
+      ],
+      "complexity": "complex",
+      "languageNotes": "自定义 TypeScript 配置文件解析器：使用正则表达式从 TS 源码中提取导出对象常量；模板化代码生成结合 XSS 安全转义（_escape 方法处理反斜杠和单引号）。"
+    },
+    {
+      "id": "file:public/admin/js/toast.js",
+      "type": "file",
+      "name": "toast.js",
+      "filePath": "public/admin/js/toast.js",
+      "summary": "轻量级 Toast 通知系统，支持 success、error、info 三种类型，自动 4 秒后消失，带 CSS 入场/退场动画，容器按需创建并挂载至 document.body。",
+      "tags": [
+        "toast",
+        "notification",
+        "ui-component"
+      ],
+      "complexity": "simple",
+      "languageNotes": "CSS transition 驱动的入场/退场动画；使用 textContent 赋值实现 XSS 安全转义。"
+    },
+    {
+      "id": "class:public/admin/js/api.js:ApiClient",
+      "type": "class",
+      "name": "ApiClient",
+      "filePath": "public/admin/js/api.js",
+      "lineRange": [
+        5,
+        178
+      ],
+      "summary": "GitHub REST API 客户端类，封装 GitHub Contents API 的 CRUD 操作，提供文件读写、删除、目录列表、图片上传和用户验证等功能。",
+      "tags": [
+        "api-client",
+        "github-api",
+        "data-access",
+        "service"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:public/admin/js/main.js:AdminApp",
+      "type": "class",
+      "name": "AdminApp",
+      "filePath": "public/admin/js/main.js",
+      "lineRange": [
+        18,
+        172
+      ],
+      "summary": "管理后台主应用类，负责登录状态管理、标签页导航渲染、各功能模块的初始化和延迟加载，以及登出逻辑。",
+      "tags": [
+        "entry-point",
+        "admin",
+        "spa",
+        "application"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:public/admin/js/modal.js:ModalManager",
+      "type": "class",
+      "name": "ModalManager",
+      "filePath": "public/admin/js/modal.js",
+      "lineRange": [
+        4,
+        111
+      ],
+      "summary": "模态弹窗管理类，提供 confirm 和 alert 两种弹窗方法，基于 Promise 模式返回用户操作结果，支持危险操作红色样式、ESC 关闭和 CSS 动画。",
+      "tags": [
+        "modal",
+        "ui-component",
+        "dialog",
+        "promise-based"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:public/admin/js/sections/image-manager.js:ImageManagerSection",
+      "type": "class",
+      "name": "ImageManagerSection",
+      "filePath": "public/admin/js/sections/image-manager.js",
+      "lineRange": [
+        7,
+        238
+      ],
+      "summary": "图片管理模块类，支持指定目录下图片的浏览、拖拽/点击上传、路径复制、Markdown 语法复制和删除操作，适用于封面图和文章插图两个图片目录。",
+      "tags": [
+        "image-manager",
+        "upload",
+        "file-management",
+        "admin-section"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "class:public/admin/js/sections/site-config.js:SiteConfigSection",
+      "type": "class",
+      "name": "SiteConfigSection",
+      "filePath": "public/admin/js/sections/site-config.js",
+      "lineRange": [
+        8,
+        256
+      ],
+      "summary": "站点配置编辑模块类，解析 TypeScript 配置文件中的站点信息和 Giscus 评论配置并渲染为表单，支持将修改后的配置生成为 TS 代码回写至 GitHub 仓库。",
+      "tags": [
+        "site-config",
+        "config-editor",
+        "form-renderer",
+        "admin-section"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "class:public/admin/js/toast.js:ToastManager",
+      "type": "class",
+      "name": "ToastManager",
+      "filePath": "public/admin/js/toast.js",
+      "lineRange": [
+        4,
+        46
+      ],
+      "summary": "Toast 通知管理类，按需创建通知容器并挂载至页面，提供 success、error、info 三种快捷方法，支持自动消失和 CSS 动画。",
+      "tags": [
+        "toast",
+        "notification",
+        "ui-component"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:public/admin/js/api.js:readFile",
+      "type": "function",
+      "name": "readFile",
+      "filePath": "public/admin/js/api.js",
+      "lineRange": [
+        61,
+        72
+      ],
+      "summary": "通过 GitHub Contents API 读取指定路径的文件内容，自动进行 Unicode 安全的 Base64 解码，返回文件内容、SHA 和路径。",
+      "tags": [
+        "api-method",
+        "file-read",
+        "github-api"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:public/admin/js/api.js:writeFile",
+      "type": "function",
+      "name": "writeFile",
+      "filePath": "public/admin/js/api.js",
+      "lineRange": [
+        82,
+        93
+      ],
+      "summary": "通过 GitHub Contents API 创建或更新文件，支持传入 SHA 以更新已有文件，自动进行 Unicode 安全的 Base64 编码。",
+      "tags": [
+        "api-method",
+        "file-write",
+        "github-api"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:public/admin/js/api.js:listDirectory",
+      "type": "function",
+      "name": "listDirectory",
+      "filePath": "public/admin/js/api.js",
+      "lineRange": [
+        115,
+        127
+      ],
+      "summary": "列出 GitHub 仓库指定目录下的所有文件列表，返回文件名、路径、SHA 和类型。",
+      "tags": [
+        "api-method",
+        "directory-list",
+        "github-api"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:public/admin/js/api.js:deleteFile",
+      "type": "function",
+      "name": "deleteFile",
+      "filePath": "public/admin/js/api.js",
+      "lineRange": [
+        101,
+        108
+      ],
+      "summary": "通过 GitHub Contents API 删除指定路径的文件，需要传入文件 SHA 和 commit 信息。",
+      "tags": [
+        "api-method",
+        "file-delete",
+        "github-api"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:public/admin/js/api.js:uploadImage",
+      "type": "function",
+      "name": "uploadImage",
+      "filePath": "public/admin/js/api.js",
+      "lineRange": [
+        135,
+        163
+      ],
+      "summary": "将图片文件通过 FileReader 读取为 Base64 后上传至 GitHub 仓库指定路径，返回图片的公开访问 URL。",
+      "tags": [
+        "api-method",
+        "image-upload",
+        "github-api",
+        "file-upload"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:public/admin/js/main.js:constructor",
+      "type": "function",
+      "name": "constructor",
+      "filePath": "public/admin/js/main.js",
+      "lineRange": [
+        19,
+        31
+      ],
+      "summary": "AdminApp 构造函数，从 DOM 元素 dataset 读取 owner 和 repo 配置，初始化 Toast、Modal 管理器及 sections 映射表。",
+      "tags": [
+        "constructor",
+        "initialization",
+        "admin"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:public/admin/js/main.js:init",
+      "type": "function",
+      "name": "init",
+      "filePath": "public/admin/js/main.js",
+      "lineRange": [
+        33,
+        50
+      ],
+      "summary": "应用启动入口，尝试用已存储的 Token 自动登录；若成功则进入管理界面，否则渲染登录界面。",
+      "tags": [
+        "initialization",
+        "auth-flow",
+        "entry-point"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:public/admin/js/main.js:_onLoginSuccess",
+      "type": "function",
+      "name": "_onLoginSuccess",
+      "filePath": "public/admin/js/main.js",
+      "lineRange": [
+        52,
+        71
+      ],
+      "summary": "登录成功回调，创建 ApiClient 和 AuthManager 实例，初始化所有功能模块的 sections 并渲染管理后台界面。",
+      "tags": [
+        "auth-flow",
+        "initialization",
+        "admin"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:public/admin/js/main.js:_renderShell",
+      "type": "function",
+      "name": "_renderShell",
+      "filePath": "public/admin/js/main.js",
+      "lineRange": [
+        73,
+        125
+      ],
+      "summary": "渲染管理后台的完整 UI 框架，包括顶部 Header（品牌标识+用户信息+登出按钮）、标签页导航栏和内容面板区域。",
+      "tags": [
+        "ui-render",
+        "admin-shell",
+        "dom-manipulation"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:public/admin/js/main.js:switchTab",
+      "type": "function",
+      "name": "switchTab",
+      "filePath": "public/admin/js/main.js",
+      "lineRange": [
+        127,
+        155
+      ],
+      "summary": "标签页切换逻辑，更新导航和面板的 active 状态，首次切换到某标签时延迟加载并渲染对应 section 模块。",
+      "tags": [
+        "tab-routing",
+        "lazy-loading",
+        "ui-logic"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:public/admin/js/main.js:_logout",
+      "type": "function",
+      "name": "_logout",
+      "filePath": "public/admin/js/main.js",
+      "lineRange": [
+        157,
+        171
+      ],
+      "summary": "登出处理，清除存储的 Token，重置所有 section 实例和 API 客户端，重新渲染登录界面。",
+      "tags": [
+        "auth-flow",
+        "logout",
+        "admin"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:public/admin/js/modal.js:confirm",
+      "type": "function",
+      "name": "confirm",
+      "filePath": "public/admin/js/modal.js",
+      "lineRange": [
+        12,
+        63
+      ],
+      "summary": "确认弹窗，支持 normal 和 danger 两种样式，返回 Promise<boolean>，用户点击确认返回 true，取消或点击遮罩/ESC 返回 false。",
+      "tags": [
+        "modal",
+        "confirmation",
+        "promise-based",
+        "ui-dialog"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:public/admin/js/modal.js:alert",
+      "type": "function",
+      "name": "alert",
+      "filePath": "public/admin/js/modal.js",
+      "lineRange": [
+        70,
+        110
+      ],
+      "summary": "提示弹窗，仅显示确认按钮，返回 Promise<void>，支持 ESC/Enter 键关闭和点击遮罩关闭。",
+      "tags": [
+        "modal",
+        "alert",
+        "promise-based",
+        "ui-dialog"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:public/admin/js/sections/image-manager.js:render",
+      "type": "function",
+      "name": "render",
+      "filePath": "public/admin/js/sections/image-manager.js",
+      "lineRange": [
+        27,
+        39
+      ],
+      "summary": "渲染图片管理界面，创建标题 Header 和加载占位区域，然后调用 _load 加载图片列表。",
+      "tags": [
+        "ui-render",
+        "image-manager",
+        "admin-section"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:public/admin/js/sections/image-manager.js:_load",
+      "type": "function",
+      "name": "_load",
+      "filePath": "public/admin/js/sections/image-manager.js",
+      "lineRange": [
+        41,
+        57
+      ],
+      "summary": "从 GitHub API 加载目录下的图片文件列表，过滤出图片格式并按名称倒序排列，处理 404 目录不存在的情况。",
+      "tags": [
+        "data-loading",
+        "image-manager",
+        "admin-section"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:public/admin/js/sections/image-manager.js:_render",
+      "type": "function",
+      "name": "_render",
+      "filePath": "public/admin/js/sections/image-manager.js",
+      "lineRange": [
+        59,
+        136
+      ],
+      "summary": "渲染图片管理器的主体界面，包括上传拖拽区域（支持拖拽和点击上传）、图片统计信息、空状态提示和图片网格列表。",
+      "tags": [
+        "ui-render",
+        "drag-drop",
+        "image-manager",
+        "upload"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:public/admin/js/sections/image-manager.js:_renderImageCard",
+      "type": "function",
+      "name": "_renderImageCard",
+      "filePath": "public/admin/js/sections/image-manager.js",
+      "lineRange": [
+        139,
+        186
+      ],
+      "summary": "渲染单张图片卡片，包含缩略图（含加载失败回退）、文件名、复制路径按钮、复制 Markdown 按钮和删除按钮。",
+      "tags": [
+        "ui-render",
+        "image-card",
+        "admin-section"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:public/admin/js/sections/image-manager.js:_deleteImage",
+      "type": "function",
+      "name": "_deleteImage",
+      "filePath": "public/admin/js/sections/image-manager.js",
+      "lineRange": [
+        197,
+        226
+      ],
+      "summary": "删除图片操作，先弹出危险确认弹窗，确认后调用 API 删除文件，执行 CSS 缩放淡出动画后移除卡片并更新计数。",
+      "tags": [
+        "delete-operation",
+        "image-manager",
+        "admin-section"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:public/admin/js/sections/site-config.js:render",
+      "type": "function",
+      "name": "render",
+      "filePath": "public/admin/js/sections/site-config.js",
+      "lineRange": [
+        17,
+        33
+      ],
+      "summary": "渲染站点配置界面，创建标题 Header 和保存按钮，加载并解析 src/config/site.ts 文件内容后渲染表单。",
+      "tags": [
+        "ui-render",
+        "site-config",
+        "admin-section"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:public/admin/js/sections/site-config.js:_load",
+      "type": "function",
+      "name": "_load",
+      "filePath": "public/admin/js/sections/site-config.js",
+      "lineRange": [
+        35,
+        46
+      ],
+      "summary": "从 GitHub API 读取 site.ts 配置文件内容，保存原始内容和 SHA，解析站点信息和 Giscus 配置后渲染表单。",
+      "tags": [
+        "data-loading",
+        "site-config",
+        "admin-section"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:public/admin/js/sections/site-config.js:_parseObj",
+      "type": "function",
+      "name": "_parseObj",
+      "filePath": "public/admin/js/sections/site-config.js",
+      "lineRange": [
+        48,
+        90
+      ],
+      "summary": "TypeScript 对象常量解析器，使用正则表达式匹配 export const 声明的对象，逐行解析键值对，支持字符串、布尔值类型并处理 as const 语法。",
+      "tags": [
+        "parser",
+        "typescript-parsing",
+        "config-parser",
+        "utility"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:public/admin/js/sections/site-config.js:_render",
+      "type": "function",
+      "name": "_render",
+      "filePath": "public/admin/js/sections/site-config.js",
+      "lineRange": [
+        102,
+        169
+      ],
+      "summary": "渲染站点配置编辑表单，分为站点信息卡片（名称、标题、描述等 9 个字段）和 Giscus 评论配置卡片（启用开关及 11 个配置字段）。",
+      "tags": [
+        "ui-render",
+        "form-renderer",
+        "site-config",
+        "admin-section"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:public/admin/js/sections/site-config.js:_readFormValues",
+      "type": "function",
+      "name": "_readFormValues",
+      "filePath": "public/admin/js/sections/site-config.js",
+      "lineRange": [
+        171,
+        189
+      ],
+      "summary": "从表单 DOM 元素中读取当前站点信息和 Giscus 配置的值，返回包含 site 和 giscus 两个对象的结构化数据。",
+      "tags": [
+        "form-reader",
+        "data-extraction",
+        "admin-section"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:public/admin/js/sections/site-config.js:_generateSiteTs",
+      "type": "function",
+      "name": "_generateSiteTs",
+      "filePath": "public/admin/js/sections/site-config.js",
+      "lineRange": [
+        195,
+        234
+      ],
+      "summary": "根据站点和 Giscus 配置数据生成完整的 site.ts TypeScript 源代码，包含转义处理和 as const 类型断言。",
+      "tags": [
+        "code-generation",
+        "typescript",
+        "template",
+        "admin-section"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:public/admin/js/sections/site-config.js:_save",
+      "type": "function",
+      "name": "_save",
+      "filePath": "public/admin/js/sections/site-config.js",
+      "lineRange": [
+        236,
+        255
+      ],
+      "summary": "保存站点配置，读取表单值并生成 TypeScript 代码，通过 GitHub API 写回仓库文件，成功后更新本地内存中的配置。",
+      "tags": [
+        "save-operation",
+        "site-config",
+        "admin-section"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:public/admin/js/toast.js:show",
+      "type": "function",
+      "name": "show",
+      "filePath": "public/admin/js/toast.js",
+      "lineRange": [
+        19,
+        35
+      ],
+      "summary": "创建并显示一条 Toast 通知，根据 type 参数选择图标和样式，4 秒后自动触发退场动画并移除 DOM 元素。",
+      "tags": [
+        "toast",
+        "notification",
+        "ui-render"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:public/admin/js/auth.js",
+      "type": "file",
+      "name": "auth.js",
+      "filePath": "public/admin/js/auth.js",
+      "summary": "管理后台的认证模块，负责 GitHub Personal Access Token 的本地存储、验证，以及登录界面的渲染与交互逻辑。",
+      "tags": [
+        "认证",
+        "令牌管理",
+        "github-api",
+        "管理后台",
+        "登录"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:public/admin/js/sections/categories.js",
+      "type": "file",
+      "name": "categories.js",
+      "filePath": "public/admin/js/sections/categories.js",
+      "summary": "管理后台的分类管理模块，通过 GitHub API 读写 src/config/categories.ts 配置文件，提供分类的增删改查界面。",
+      "tags": [
+        "分类管理",
+        "配置编辑",
+        "crud",
+        "管理后台"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:public/admin/js/sections/hero.js",
+      "type": "file",
+      "name": "hero.js",
+      "filePath": "public/admin/js/sections/hero.js",
+      "summary": "管理后台的首页轮播图管理模块，通过 GitHub API 读写 src/config/hero.ts 配置文件，支持图片路径、描述和切换间隔的编辑。",
+      "tags": [
+        "轮播图",
+        "配置编辑",
+        "管理后台",
+        "图片管理"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:public/admin/js/sections/links.js",
+      "type": "file",
+      "name": "links.js",
+      "filePath": "public/admin/js/sections/links.js",
+      "summary": "管理后台的链接管理模块，通过 GitHub API 读写 src/config/links.ts 配置文件，分别管理社交链接和友链两组数据。",
+      "tags": [
+        "链接管理",
+        "友链",
+        "配置编辑",
+        "管理后台"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:public/admin/js/sections/skills.js",
+      "type": "file",
+      "name": "skills.js",
+      "filePath": "public/admin/js/sections/skills.js",
+      "summary": "管理后台的技能徽章管理模块，通过 GitHub API 读写 src/config/skills.ts 配置文件，以标签形式管理技能字符串列表。",
+      "tags": [
+        "技能管理",
+        "配置编辑",
+        "管理后台",
+        "标签"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:public/admin/js/utils/dom.js",
+      "type": "file",
+      "name": "dom.js",
+      "filePath": "public/admin/js/utils/dom.js",
+      "summary": "管理后台的 DOM 工具函数集，提供元素创建、表单组构建、显示切换和容器清空等基础 DOM 操作辅助方法。",
+      "tags": [
+        "工具函数",
+        "dom操作",
+        "管理后台"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:public/admin/js/auth.js:AuthManager",
+      "type": "class",
+      "name": "AuthManager",
+      "filePath": "public/admin/js/auth.js",
+      "lineRange": [
+        8,
+        130
+      ],
+      "summary": "认证管理器类，封装了 Token 的存取与清除，提供 GitHub Token 验证以及完整的登录界面渲染与事件绑定逻辑。",
+      "tags": [
+        "认证",
+        "令牌管理",
+        "github-api",
+        "登录"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:public/admin/js/sections/categories.js:CategoriesSection",
+      "type": "class",
+      "name": "CategoriesSection",
+      "filePath": "public/admin/js/sections/categories.js",
+      "lineRange": [
+        8,
+        267
+      ],
+      "summary": "分类管理模块类，负责从 GitHub 拉取 categories.ts 配置、解析分类数组、渲染可编辑列表，并通过代码生成器将修改写回仓库。",
+      "tags": [
+        "分类管理",
+        "配置编辑",
+        "crud",
+        "代码生成"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "class:public/admin/js/sections/hero.js:HeroSection",
+      "type": "class",
+      "name": "HeroSection",
+      "filePath": "public/admin/js/sections/hero.js",
+      "lineRange": [
+        8,
+        210
+      ],
+      "summary": "轮播图管理模块类，负责从 GitHub 拉取 hero.ts 配置、解析图片数组和间隔参数、渲染编辑界面，并生成 TypeScript 代码写回仓库。",
+      "tags": [
+        "轮播图",
+        "配置编辑",
+        "图片管理",
+        "代码生成"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "class:public/admin/js/sections/links.js:LinksSection",
+      "type": "class",
+      "name": "LinksSection",
+      "filePath": "public/admin/js/sections/links.js",
+      "lineRange": [
+        9,
+        222
+      ],
+      "summary": "链接管理模块类，负责从 GitHub 拉取 links.ts 配置、分别解析社交链接与友链数组、渲染双组编辑界面，并生成 TypeScript 代码写回仓库。",
+      "tags": [
+        "链接管理",
+        "友链",
+        "配置编辑",
+        "代码生成"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "class:public/admin/js/sections/skills.js:SkillsSection",
+      "type": "class",
+      "name": "SkillsSection",
+      "filePath": "public/admin/js/sections/skills.js",
+      "lineRange": [
+        8,
+        167
+      ],
+      "summary": "技能管理模块类，负责从 GitHub 拉取 skills.ts 配置、解析字符串数组、以标签列表形式渲染编辑界面，并生成 TypeScript 代码写回仓库。",
+      "tags": [
+        "技能管理",
+        "配置编辑",
+        "标签",
+        "代码生成"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:public/admin/js/utils/dom.js:el",
+      "type": "function",
+      "name": "el",
+      "filePath": "public/admin/js/utils/dom.js",
+      "lineRange": [
+        12,
+        37
+      ],
+      "summary": "核心 DOM 创建函数，根据标签名、属性对象和子节点创建 HTML 元素，自动处理 className、事件绑定、data 属性等多种属性类型。",
+      "tags": [
+        "工具函数",
+        "dom操作",
+        "元素创建"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:public/admin/js/utils/dom.js:formGroup",
+      "type": "function",
+      "name": "formGroup",
+      "filePath": "public/admin/js/utils/dom.js",
+      "lineRange": [
+        46,
+        59
+      ],
+      "summary": "表单组创建函数，生成带 label 标签、输入控件和可选帮助文本的标准化表单项容器。",
+      "tags": [
+        "工具函数",
+        "表单",
+        "dom操作"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:public/admin/js/utils/dom.js:toggle",
+      "type": "function",
+      "name": "toggle",
+      "filePath": "public/admin/js/utils/dom.js",
+      "lineRange": [
+        66,
+        68
+      ],
+      "summary": "元素显示切换函数，通过设置 display 样式控制元素的可见性。",
+      "tags": [
+        "工具函数",
+        "dom操作",
+        "显示切换"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:public/admin/js/utils/dom.js:clearContainer",
+      "type": "function",
+      "name": "clearContainer",
+      "filePath": "public/admin/js/utils/dom.js",
+      "lineRange": [
+        74,
+        78
+      ],
+      "summary": "容器清空函数，移除指定元素的所有子节点，用于界面刷新前的清理操作。",
+      "tags": [
+        "工具函数",
+        "dom操作",
+        "清空"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "pipeline:.github/workflows/deploy.yml",
+      "type": "pipeline",
+      "name": "deploy.yml",
+      "filePath": ".github/workflows/deploy.yml",
+      "summary": "GitHub Actions 工作流，在推送至 main 分支时自动构建 Astro 站点并部署到 GitHub Pages，包含构建（build）和部署（deploy）两个作业。",
+      "tags": [
+        "ci-cd",
+        "deployment",
+        "github-actions",
+        "automation"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "step:.github/workflows/deploy.yml:build",
+      "type": "step",
+      "name": "build",
+      "filePath": ".github/workflows/deploy.yml",
+      "lineRange": [
+        18,
+        41
+      ],
+      "summary": "构建作业，在 ubuntu-latest 上运行，包含检出代码、安装 Node.js 22、安装依赖（npm ci）、构建站点（npm run build）和上传构建产物五个步骤。",
+      "tags": [
+        "build",
+        "ci-cd",
+        "nodejs"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "step:.github/workflows/deploy.yml:deploy",
+      "type": "step",
+      "name": "deploy",
+      "filePath": ".github/workflows/deploy.yml",
+      "lineRange": [
+        43,
+        54
+      ],
+      "summary": "部署作业，依赖 build 作业完成，将构建产物部署到 GitHub Pages 环境（github-pages）。",
+      "tags": [
+        "deployment",
+        "github-pages",
+        "ci-cd"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "document:README.md",
+      "type": "document",
+      "name": "README.md",
+      "filePath": "README.md",
+      "summary": "项目概览文档，涵盖功能介绍（博客、管理后台、日历、分类、轮播、樱花动画等12项特性）、本地开发指南、项目结构说明、文章发布流程与 frontmatter 规范、管理后台使用指引、Giscus 评论配置步骤、自定义配置速查表和技术栈总览。",
+      "tags": [
+        "documentation",
+        "entry-point",
+        "overview",
+        "getting-started",
+        "中文"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:deploy.ps1",
+      "type": "file",
+      "name": "deploy.ps1",
+      "filePath": "deploy.ps1",
+      "summary": "一键推送 PowerShell 脚本，将本地代码推送至 GitHub 的 main 分支，触发 GitHub Actions 自动构建部署，并输出首次配置指引。",
+      "tags": [
+        "deployment",
+        "script",
+        "git",
+        "utility"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "config:package.json",
+      "type": "config",
+      "name": "package.json",
+      "filePath": "package.json",
+      "summary": "Node.js 项目配置文件，定义包元信息（名称、版本、引擎要求 >=22.12.0）、npm 脚本（dev/build/preview）以及 Astro 6.x、TailwindCSS 4.x、MDX、RSS、Sitemap 等运行时依赖。",
+      "tags": [
+        "configuration",
+        "nodejs",
+        "dependencies",
+        "build-system"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "config:tsconfig.json",
+      "type": "config",
+      "name": "tsconfig.json",
+      "filePath": "tsconfig.json",
+      "summary": "TypeScript 编译器配置，继承 Astro 严格模式预设（astro/tsconfigs/strict），包含所有源文件与 .astro 类型声明，排除 dist 构建输出目录。",
+      "tags": [
+        "configuration",
+        "typescript",
+        "build-system"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "document:src/content/blog/07-数据结构笔记整理.md",
+      "type": "document",
+      "name": "07-数据结构笔记整理.md",
+      "filePath": "src/content/blog/07-数据结构笔记整理.md",
+      "summary": "Python 与 Java 双语对照的数据结构学习笔记，覆盖列表/数组、元组、集合、字典/映射、栈与队列、堆/优先队列六大核心结构，按概念→Python→Java→对比→算法题场景的方式展开，附完整的操作速查与对照表。",
+      "tags": [
+        "数据结构",
+        "python",
+        "java",
+        "学习笔记",
+        "编程学习"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "document:src/content/blog/2026-05-29-my-new-post1.md",
+      "type": "document",
+      "name": "2026-05-29-my-new-post1.md",
+      "filePath": "src/content/blog/2026-05-29-my-new-post1.md",
+      "summary": "在线桌游平台产品需求文档，定义插件化多游戏平台的核心需求，包括五子棋、飞行棋等桌游的实时联机对战功能，以及可扩展的游戏接入机制。",
+      "tags": [
+        "产品需求",
+        "桌游平台",
+        "实时联机",
+        "技术设计"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "document:src/content/blog/2026-05-29-my-new-post2.md",
+      "type": "document",
+      "name": "2026-05-29-my-new-post2.md",
+      "filePath": "src/content/blog/2026-05-29-my-new-post2.md",
+      "summary": "在线桌游平台技术架构文档，详细描述前端、后端、数据库和实时通信方案的技术选型与架构设计，涵盖 WebSocket 通信、游戏状态同步等核心技术方案。",
+      "tags": [
+        "技术架构",
+        "桌游平台",
+        "websocket",
+        "系统设计"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "document:src/content/blog/2026-05-31-blog-writing-guide.md",
+      "type": "document",
+      "name": "2026-05-31-blog-writing-guide.md",
+      "filePath": "src/content/blog/2026-05-31-blog-writing-guide.md",
+      "summary": "博客写作指南，介绍如何正确编写 Markdown 文章，包括 Frontmatter 格式规范、常见错误处理以及图片插入方法，帮助新作者快速上手本博客的写作流程。",
+      "tags": [
+        "教程",
+        "写作指南",
+        "markdown",
+        "frontmatter"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "document:src/content/blog/2026-06-04.md",
+      "type": "document",
+      "name": "2026-06-04.md",
+      "filePath": "src/content/blog/2026-06-04.md",
+      "summary": "像素可爱风庆生网页项目记录，从零构建 8 阶段交互式 H5 页面，包含粒子开场、回忆卡片、打气筒吹气球交互、Canvas 2D 游戏、蛋糕搭建、吹蜡烛、礼物选择和烟花庆典等完整前端项目。",
+      "tags": [
+        "前端开发",
+        "canvas",
+        "互动网页",
+        "庆生页面",
+        "像素风"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "document:src/content/blog/2026-06-05.md",
+      "type": "document",
+      "name": "2026-06-05.md",
+      "filePath": "src/content/blog/2026-06-05.md",
+      "summary": "庆生网页三大模块重构记录：蛋糕搭建从纯 CSS 改为 PNG 拖拽堆叠、蜡烛/礼物界面优化、庆典阶段完全重写（星野背景+文字烟花+环形爆发+点击连发），以及回忆阶段照片灯箱和多项 Bug 修复。",
+      "tags": [
+        "前端开发",
+        "重构",
+        "canvas",
+        "烟花特效",
+        "bug修复"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "document:src/content/blog/2026-06-06-admin-panel.md",
+      "type": "document",
+      "name": "2026-06-06-admin-panel.md",
+      "filePath": "src/content/blog/2026-06-06-admin-panel.md",
+      "summary": "博客管理后台功能介绍文档，纯前端 SPA 方案，零依赖，通过 GitHub Token 登录和 GitHub Contents API 实现文章 CRUD、站点配置、友链、分类、技能、轮播图等全套在线管理功能。",
+      "tags": [
+        "管理后台",
+        "github-api",
+        "spa",
+        "前端开发",
+        "文档"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "document:src/content/blog/2026-06-06-二次元作品中的一些萌属性.md",
+      "type": "document",
+      "name": "2026-06-06-二次元作品中的一些萌属性.md",
+      "filePath": "src/content/blog/2026-06-06-二次元作品中的一些萌属性.md",
+      "summary": "二次元文化中的萌属性科普文章，按外貌、性格、身份背景等类别系统介绍经典二次元萌属性，附典型角色举例。",
+      "tags": [
+        "二次元",
+        "萌属性",
+        "文化科普",
+        "acg"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "document:src/content/blog/2026-06-07-java-basic-syntax.md",
+      "type": "document",
+      "name": "2026-06-07-java-basic-syntax.md",
+      "filePath": "src/content/blog/2026-06-07-java-basic-syntax.md",
+      "summary": "Java 基础语法学习记录，从零快速掌握 Java 核心语法，包括程序结构、标准输入输出、变量与数据类型、运算符、控制流等基础知识。",
+      "tags": [
+        "java",
+        "基础语法",
+        "学习笔记",
+        "编程学习"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "document:src/content/blog/2026-06-11-transformer、rnn-与-cnn-详解.md",
+      "type": "document",
+      "name": "2026-06-11-transformer、rnn-与-cnn-详解.md",
+      "filePath": "src/content/blog/2026-06-11-transformer、rnn-与-cnn-详解.md",
+      "summary": "深度学习三大核心架构详解：CNN（卷积神经网络）、RNN（循环神经网络）与 Transformer 的原理、演进关系和应用场景对比分析。",
+      "tags": [
+        "深度学习",
+        "transformer",
+        "cnn",
+        "rnn",
+        "ai"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "document:src/content/blog/2026-06-12-面向对象设计原则入门：srp、ocp-与-dip.md",
+      "type": "document",
+      "name": "2026-06-12-面向对象设计原则入门：srp、ocp-与-dip.md",
+      "filePath": "src/content/blog/2026-06-12-面向对象设计原则入门：srp、ocp-与-dip.md",
+      "summary": "面向对象设计原则入门教程，深入讲解 SOLID 原则中的单一职责原则（SRP）、开闭原则（OCP）和依赖倒置原则（DIP），配合代码示例说明核心思想与实际应用。",
+      "tags": [
+        "面向对象",
+        "设计原则",
+        "solid",
+        "srp",
+        "ocp",
+        "dip"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "document:src/content/blog/2026-06-13-langchain-学习记录（day-1）：从-prompt-到-ai-应用框架.md",
+      "type": "document",
+      "name": "2026-06-13-langchain-学习记录（day-1）：从-prompt-到-ai-应用框架.md",
+      "filePath": "src/content/blog/2026-06-13-langchain-学习记录（day-1）：从-prompt-到-ai-应用框架.md",
+      "summary": "LangChain 学习记录第一天，涵盖框架定位、核心组件介绍（PromptTemplate、LLM、Chains），以及与直接调用大模型 API 的区别对比。",
+      "tags": [
+        "langchain",
+        "ai应用",
+        "学习笔记",
+        "llm",
+        "prompt"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "document:src/content/blog/2026-06-14-langchain-学习记录（day-2）：chain-与-runnable，从单次调用到-ai-工作流.md",
+      "type": "document",
+      "name": "2026-06-14-langchain-学习记录（day-2）：chain-与-runnable，从单次调用到-ai-工作流.md",
+      "filePath": "src/content/blog/2026-06-14-langchain-学习记录（day-2）：chain-与-runnable，从单次调用到-ai-工作流.md",
+      "summary": "LangChain 学习记录第二天，深入讲解 Chain 和 Runnable 机制，包括 LCEL（LangChain Expression Language）的使用方式，以及如何从单次 API 调用构建完整的 AI 工作流管道。",
+      "tags": [
+        "langchain",
+        "chain",
+        "runnable",
+        "ai工作流",
+        "学习笔记"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "document:src/content/blog/Python基础语法.md",
+      "type": "document",
+      "name": "Python基础语法.md",
+      "filePath": "src/content/blog/Python基础语法.md",
+      "summary": "Python 基础语法快速入门指南，覆盖程序结构、输入输出、变量与数据类型、运算符、控制流与异常处理等核心知识点，适合有其他语言基础的同学快速上手。",
+      "tags": [
+        "python",
+        "基础语法",
+        "快速入门",
+        "学习笔记"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "document:src/content/blog/how-to-publish.md",
+      "type": "document",
+      "name": "how-to-publish.md",
+      "filePath": "src/content/blog/how-to-publish.md",
+      "summary": "简明发文指南，说明通过本地 Markdown 文件与 Git 推送发布博客文章的工作流程，以及 Giscus 评论系统的配置方式。",
+      "tags": [
+        "教程",
+        "发文指南",
+        "git",
+        "giscus"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "document:src/content/blog/机器学习、深度学习和大模型之间的关系.md",
+      "type": "document",
+      "name": "机器学习、深度学习和大模型之间的关系.md",
+      "filePath": "src/content/blog/机器学习、深度学习和大模型之间的关系.md",
+      "summary": "从软件工程视角系统分析机器学习、深度学习与大模型之间的层级包含关系，梳理三者发展脉络、核心区别以及在工程实践中的应用场景。",
+      "tags": [
+        "机器学习",
+        "深度学习",
+        "大模型",
+        "ai",
+        "概念辨析"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "document:src/content/blog/算法专题.md",
+      "type": "document",
+      "name": "算法专题.md",
+      "filePath": "src/content/blog/算法专题.md",
+      "summary": "算法专题学习笔记（Python × Java 双语），系统覆盖排序、二分查找、双指针、滑动窗口、BFS/DFS、动态规划、回溯、贪心、位运算等核心算法模式，附高频算法题实战。",
+      "tags": [
+        "算法",
+        "python",
+        "java",
+        "学习笔记",
+        "数据结构"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:astro.config.mjs",
+      "type": "file",
+      "name": "astro.config.mjs",
+      "filePath": "astro.config.mjs",
+      "summary": "Astro 构建配置文件，集成 TailwindCSS Vite 插件、MDX、Sitemap，配置站点 URL、路径尾部斜杠策略及代码高亮主题。",
+      "tags": [
+        "configuration",
+        "build-system",
+        "entry-point",
+        "astro"
+      ],
+      "complexity": "simple",
+      "languageNotes": "使用 Astro 6.x defineConfig API，通过 Vite 插件集成 TailwindCSS 4.x。"
+    },
+    {
+      "id": "file:public/admin/admin.css",
+      "type": "file",
+      "name": "admin.css",
+      "filePath": "public/admin/admin.css",
+      "summary": "管理后台完整样式表，包含认证界面、导航标签、表单、表格、文章编辑器、Toast 通知、Modal 弹窗、图片管理等所有 UI 组件的样式定义，延续 sakura 粉色主题。",
+      "tags": [
+        "stylesheet",
+        "admin-panel",
+        "ui-component",
+        "responsive"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:public/admin/js/sections/posts.js",
+      "type": "file",
+      "name": "posts.js",
+      "filePath": "public/admin/js/sections/posts.js",
+      "summary": "管理后台文章管理模块，提供文章列表展示（按日期排序）、新建/编辑文章（含 frontmatter 表单、Markdown 编辑器、实时预览）、删除确认、封面图拖拽上传以及编辑器内图片粘贴/拖拽上传功能。",
+      "tags": [
+        "admin-panel",
+        "content-management",
+        "markdown-editor",
+        "crud"
+      ],
+      "complexity": "complex",
+      "languageNotes": "使用 IIFE 和 ES6 class 组织代码，通过 GitHub Contents API 完成文件 CRUD 操作，含自定义简易 Markdown 渲染器。"
+    },
+    {
+      "id": "file:public/admin/js/utils/frontmatter.js",
+      "type": "file",
+      "name": "frontmatter.js",
+      "filePath": "public/admin/js/utils/frontmatter.js",
+      "summary": "YAML Frontmatter 解析与生成工具模块，支持解析文章元数据（标题、日期、分类、草稿、封面等字段），并能根据 frontmatter 对象重新生成完整 Markdown 文件内容，同时提供安全文件名生成功能。",
+      "tags": [
+        "utility",
+        "parsing",
+        "serialization",
+        "frontmatter"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:public/images/.gitkeep",
+      "type": "file",
+      "name": ".gitkeep",
+      "filePath": "public/images/.gitkeep",
+      "summary": "空占位文件，用于确保 public/images 目录被 Git 跟踪。",
+      "tags": [
+        "placeholder",
+        "git"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/components/BlogCalendar.astro",
+      "type": "file",
+      "name": "BlogCalendar.astro",
+      "filePath": "src/components/BlogCalendar.astro",
+      "summary": "博客日历组件，以月视图日历形式展示文章发布分布，支持月份切换、日期点击筛选文章列表（blog 模式）或跳转到博客页（home 模式），含服务端首屏渲染和客户端交互脚本。",
+      "tags": [
+        "component",
+        "calendar",
+        "interactive",
+        "filter"
+      ],
+      "complexity": "complex",
+      "languageNotes": "Astro 组件混合服务端渲染和客户端 IIFE 脚本，通过 data 属性传递初始数据，实现日历导航与文章筛选联动。"
+    },
+    {
+      "id": "file:src/components/CategoryFilter.astro",
+      "type": "file",
+      "name": "CategoryFilter.astro",
+      "filePath": "src/components/CategoryFilter.astro",
+      "summary": "分类筛选组件，以双列卡片网格展示所有文章分类及对应文章数量，支持点击分类筛选文章列表（blog 模式）或日期时间线（home 模式），与日历筛选联动（AND 逻辑），支持 URL 参数恢复筛选状态。",
+      "tags": [
+        "component",
+        "filter",
+        "category",
+        "interactive"
+      ],
+      "complexity": "complex",
+      "languageNotes": "全局暴露 __applyCategoryFilter 方法供日历组件调用，实现日历+分类的 AND 联合筛选。"
+    },
+    {
+      "id": "file:src/components/DateTimeline.astro",
+      "type": "file",
+      "name": "DateTimeline.astro",
+      "filePath": "src/components/DateTimeline.astro",
+      "summary": "日期时间线组件，将文章按发布日期分组并以时间线形式展示，每天显示日期卡片和该日发布/更新的文章列表，区分「发布」和「更新」状态徽章，支持封面缩略图预览。",
+      "tags": [
+        "component",
+        "timeline",
+        "post-list",
+        "date-grouping"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "使用 Intl.DateTimeFormat 实现中文日期本地化（星期、月份）。"
+    },
+    {
+      "id": "file:src/components/Footer.astro",
+      "type": "file",
+      "name": "Footer.astro",
+      "filePath": "src/components/Footer.astro",
+      "summary": "页脚组件，显示版权信息和作者链接，提供 RSS 订阅和 GitHub 主页的快捷入口。",
+      "tags": [
+        "component",
+        "footer",
+        "navigation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/components/Giscus.astro",
+      "type": "file",
+      "name": "Giscus.astro",
+      "filePath": "src/components/Giscus.astro",
+      "summary": "Giscus 评论系统组件，根据 site.ts 配置动态判断是否显示评论，支持未配置/已关闭/已配置三种状态提示，使用 IntersectionObserver 实现评论脚本懒加载以优化性能。",
+      "tags": [
+        "component",
+        "comments",
+        "third-party-integration",
+        "lazy-loading"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "使用 Astro define:vars 将服务端配置注入客户端脚本，IntersectionObserver 实现视口检测懒加载。"
+    },
+    {
+      "id": "file:src/components/GitHubCard.astro",
+      "type": "file",
+      "name": "GitHubCard.astro",
+      "filePath": "src/components/GitHubCard.astro",
+      "summary": "GitHub 个人资料卡片组件，构建时通过 GitHub API 获取用户头像、昵称和简介，展示 GitHub 贡献日历图（ghchart），提供 Follow on GitHub 按钮链接。",
+      "tags": [
+        "component",
+        "github",
+        "api-integration",
+        "profile-card"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "Astro 组件前端 matter 中使用顶层 await 调用 GitHub Users API，构建时静默失败降级。"
+    },
+    {
+      "id": "file:src/components/Header.astro",
+      "type": "file",
+      "name": "Header.astro",
+      "filePath": "src/components/Header.astro",
+      "summary": "站点头部导航组件，支持默认（sticky）和首页首屏（fixed 透明）两种变体，包含站点 Logo/头像和主导航链接（首页、博客、分类、外链、关于），自动高亮当前路由。",
+      "tags": [
+        "component",
+        "header",
+        "navigation",
+        "responsive"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:src/components/HeroSlideshow.astro",
+      "type": "file",
+      "name": "HeroSlideshow.astro",
+      "filePath": "src/components/HeroSlideshow.astro",
+      "summary": "首页首屏轮播组件，展示多张全屏背景图片自动轮播，包含欢迎标题、站点描述和向下滚动引导按钮，支持指示点点击切换和鼠标悬停暂停。",
+      "tags": [
+        "component",
+        "hero",
+        "slideshow",
+        "landing-page"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "客户端使用 setInterval 实现自动轮播，通过 define:vars 将配置（间隔、张数）注入脚本。"
+    },
+    {
+      "id": "file:src/components/PostCard.astro",
+      "type": "file",
+      "name": "PostCard.astro",
+      "filePath": "src/components/PostCard.astro",
+      "summary": "文章卡片组件，展示单篇文章的日期、分类标签、标题、摘要和阅读链接，可选展示封面缩略图（桌面端），左侧装饰线在悬停时加宽变色，整体带有精细的悬停动效。",
+      "tags": [
+        "component",
+        "post-card",
+        "article-display",
+        "animated"
+      ],
+      "complexity": "complex",
+      "languageNotes": "纯 CSS 实现丰富的悬停动画（卡片位移、装饰线扩展、封面缩放、标题下划线渐变），支持响应式封面显示。"
+    },
+    {
+      "id": "file:src/components/SakuraPetals.astro",
+      "type": "file",
+      "name": "SakuraPetals.astro",
+      "filePath": "src/components/SakuraPetals.astro",
+      "summary": "樱花花瓣飘落动画组件，生成 6 片不同位置、延迟和速度的纯 CSS 动画花瓣，固定覆盖全屏作为背景装饰。",
+      "tags": [
+        "component",
+        "animation",
+        "decoration",
+        "css-only"
+      ],
+      "complexity": "simple",
+      "languageNotes": "纯 CSS @keyframes 驱动花瓣飘落动画，无 JavaScript 依赖，通过内联 style 注入差异化动画参数。"
+    },
+    {
+      "id": "file:src/components/SiteAvatar.astro",
+      "type": "file",
+      "name": "SiteAvatar.astro",
+      "filePath": "src/components/SiteAvatar.astro",
+      "summary": "站点头像组件，支持 sm/lg 两种尺寸，有头像时显示图片否则显示花朵占位符（✿），带悬停缩放和可选的额外 CSS 类名。",
+      "tags": [
+        "component",
+        "avatar",
+        "image-display"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/components/SkillBadges.astro",
+      "type": "file",
+      "name": "SkillBadges.astro",
+      "filePath": "src/components/SkillBadges.astro",
+      "summary": "技能徽章展示组件，从 skills 配置读取技能列表，以彩色圆角徽章形式循环展示 8 种配色方案，悬停时上浮并显示阴影效果。",
+      "tags": [
+        "component",
+        "badge",
+        "skills-display",
+        "color-system"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/components/TableOfContents.astro",
+      "type": "file",
+      "name": "TableOfContents.astro",
+      "filePath": "src/components/TableOfContents.astro",
+      "summary": "文章目录组件，接收 Markdown 标题数据生成层级导航目录（H2-H4），桌面端始终展开，移动端支持折叠/展开切换，使用 IntersectionObserver 实现滚动高亮当前阅读章节，点击项平滑滚动到对应锚点。",
+      "tags": [
+        "component",
+        "table-of-contents",
+        "navigation",
+        "scroll-spy"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "IntersectionObserver 结合 fallback 逻辑实现滚动位置追踪，支持 URL hash 初始化定位。"
+    },
+    {
+      "id": "file:src/config/categories.ts",
+      "type": "file",
+      "name": "categories.ts",
+      "filePath": "src/config/categories.ts",
+      "summary": "文章分类配置文件，定义 7 个分类（前端开发、游戏策划、技术架构和设计、编程学习记录、教程分享、AI技术、二次元杂谈），每个分类包含 slug、名称和描述，并提供按 slug 查找分类的工具函数。",
+      "tags": [
+        "configuration",
+        "category",
+        "data-definition",
+        "type-definition"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/config/hero.ts",
+      "type": "file",
+      "name": "hero.ts",
+      "filePath": "src/config/hero.ts",
+      "summary": "首页首屏轮播配置，定义 3 张轮播背景图片（加藤惠、saber、初音）及其 alt 文本，以及轮播间隔时间（10 秒）。",
+      "tags": [
+        "configuration",
+        "hero",
+        "slideshow"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/config/links.ts",
+      "type": "file",
+      "name": "links.ts",
+      "filePath": "src/config/links.ts",
+      "summary": "社交链接与友链配置文件，包含 GitHub、邮箱、哔哩哔哩 3 个社交链接和一个示例友链，每个链接支持名称、URL、描述和图标类型。",
+      "tags": [
+        "configuration",
+        "social-links",
+        "friend-links",
+        "type-definition"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/config/site.ts",
+      "type": "file",
+      "name": "site.ts",
+      "filePath": "src/config/site.ts",
+      "summary": "站点核心配置文件，定义站点名称、描述、作者、头像、语言等基本信息和 Giscus 评论系统配置（repo、category、主题等），是多个组件的数据源。",
+      "tags": [
+        "configuration",
+        "site-metadata",
+        "giscus",
+        "core-config"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/config/skills.ts",
+      "type": "file",
+      "name": "skills.ts",
+      "filePath": "src/config/skills.ts",
+      "summary": "技能列表配置，以字符串数组形式存储 17 个技术技能标签（Docker、Java、Spring Boot、Vue3、TypeScript 等），供首页技能徽章组件渲染。",
+      "tags": [
+        "configuration",
+        "skills",
+        "data-definition"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/content.config.ts",
+      "type": "file",
+      "name": "content.config.ts",
+      "filePath": "src/content.config.ts",
+      "summary": "Astro Content Collections 配置文件，定义 blog 集合的加载器（glob 模式匹配 .md/.mdx）和 Zod schema（标题、描述、日期、分类、草稿状态、封面），是内容管理的核心 schema 定义。",
+      "tags": [
+        "configuration",
+        "schema-definition",
+        "content-collection",
+        "zod"
+      ],
+      "complexity": "simple",
+      "languageNotes": "使用 Astro 6.x defineCollection + Zod schema 定义内容模型，pubDate 和 updatedDate 使用 z.coerce.date() 自动类型转换。"
+    },
+    {
+      "id": "file:src/layouts/BaseLayout.astro",
+      "type": "file",
+      "name": "BaseLayout.astro",
+      "filePath": "src/layouts/BaseLayout.astro",
+      "summary": "全局基础布局组件，定义 HTML5 文档骨架，包含 SEO meta 标签（OG、Twitter Card、canonical URL）、全局样式引入，组合 Header、Footer、SakuraPetals 组件，通过 slot 渲染页面内容。",
+      "tags": [
+        "layout",
+        "base-template",
+        "seo",
+        "entry-point"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:public/admin/js/sections/posts.js:PostsSection",
+      "type": "class",
+      "name": "PostsSection",
+      "filePath": "public/admin/js/sections/posts.js",
+      "lineRange": [
+        9,
+        691
+      ],
+      "summary": "管理后台文章管理核心类，封装文章列表加载、渲染（表格形式）、新建/编辑编辑器（左右分栏：frontmatter 表单 + Markdown 编辑器 + 实时预览）、保存（通过 GitHub API 写入文件）、删除确认以及封面图拖拽上传和编辑器内图片粘贴/拖拽上传的全部逻辑。",
+      "tags": [
+        "class",
+        "admin-panel",
+        "content-management",
+        "crud",
+        "editor"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:public/admin/js/utils/frontmatter.js:parseFrontmatter",
+      "type": "function",
+      "name": "parseFrontmatter",
+      "filePath": "public/admin/js/utils/frontmatter.js",
+      "lineRange": [
+        21,
+        58
+      ],
+      "summary": "解析 Markdown 文件的 YAML frontmatter 块，逐行解析键值对（支持引号字符串、布尔值），返回 frontmatter 对象和正文内容。",
+      "tags": [
+        "utility",
+        "parsing",
+        "yaml",
+        "frontmatter"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:public/admin/js/utils/frontmatter.js:generateMarkdown",
+      "type": "function",
+      "name": "generateMarkdown",
+      "filePath": "public/admin/js/utils/frontmatter.js",
+      "lineRange": [
+        66,
+        111
+      ],
+      "summary": "根据 frontmatter 对象和正文内容生成完整的 Markdown 文件字符串，自动处理各字段的 YAML 格式（引号转义、日期格式化等），仅输出非默认值字段以保持 frontmatter 简洁。",
+      "tags": [
+        "utility",
+        "serialization",
+        "markdown",
+        "generation"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:public/admin/js/utils/frontmatter.js:sanitizeFilename",
+      "type": "function",
+      "name": "sanitizeFilename",
+      "filePath": "public/admin/js/utils/frontmatter.js",
+      "lineRange": [
+        143,
+        151
+      ],
+      "summary": "将文章标题转换为安全的文件名，去除非法字符，空格转连字符，合并多余连字符并去除首尾连字符，统一转为小写。",
+      "tags": [
+        "utility",
+        "sanitization",
+        "filename"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/layouts/HomeLayout.astro",
+      "type": "file",
+      "name": "HomeLayout.astro",
+      "filePath": "src/layouts/HomeLayout.astro",
+      "summary": "首页布局组件，提供完整 HTML 骨架（charset、viewport、OG 元数据、canonical URL），包含 Header 和 Footer 插槽，并为 hero 轮播和博客内容区域预留 slot，是首页的页面框架。",
+      "tags": [
+        "layout",
+        "seo",
+        "homepage",
+        "astro-component"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/layouts/PostLayout.astro",
+      "type": "file",
+      "name": "PostLayout.astro",
+      "filePath": "src/layouts/PostLayout.astro",
+      "summary": "文章详情布局组件，基于 BaseLayout 提供完整的文章展示：封面大图、发布日期与分类标签、更新日期提示、正文双栏排版（带 TOC 侧边栏）、文章底部的返回导航和 Giscus 评论区。",
+      "tags": [
+        "layout",
+        "blog",
+        "article",
+        "toc",
+        "comments",
+        "astro-component"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:src/pages/about.astro",
+      "type": "file",
+      "name": "about.astro",
+      "filePath": "src/pages/about.astro",
+      "summary": "关于页面，展示博主头像（SiteAvatar）、博客名称、GitHub 链接和博客用途说明，同时提示用户如何修改头像和站名配置。",
+      "tags": [
+        "page",
+        "about",
+        "profile"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/pages/admin/index.astro",
+      "type": "file",
+      "name": "index.astro",
+      "filePath": "src/pages/admin/index.astro",
+      "summary": "管理后台入口页面，从 site 配置中解析 GitHub 仓库信息（owner/repo），通过 data 属性注入至 DOM，加载 admin.css 样式和 admin/js/main.js 模块化 SPA 应用。",
+      "tags": [
+        "admin",
+        "entry-point",
+        "spa"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/pages/blog/[...slug].astro",
+      "type": "file",
+      "name": "[...slug].astro",
+      "filePath": "src/pages/blog/[...slug].astro",
+      "summary": "博客文章动态路由页面，通过 getStaticPaths 获取所有非草稿文章并生成静态路径，渲染 Markdown 内容并提取 headings 传递给 PostLayout 以支持目录导航。",
+      "tags": [
+        "page",
+        "dynamic-route",
+        "blog",
+        "ssg"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/pages/blog/index.astro",
+      "type": "file",
+      "name": "index.astro",
+      "filePath": "src/pages/blog/index.astro",
+      "summary": "博客列表页面，展示全部文章（按发布日期倒序），集成 BlogCalendar 日历组件和 CategoryFilter 分类筛选组件，支持按日期和分类过滤文章列表。",
+      "tags": [
+        "page",
+        "blog",
+        "listing",
+        "filter",
+        "calendar"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:src/pages/categories/[category].astro",
+      "type": "file",
+      "name": "[category].astro",
+      "filePath": "src/pages/categories/[category].astro",
+      "summary": "分类文章列表页，通过 getStaticPaths 为每个分类生成静态路由，展示该分类名称、描述和文章数量，过滤并列出属于该分类的全部文章。",
+      "tags": [
+        "page",
+        "dynamic-route",
+        "category",
+        "filter"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:src/pages/categories/index.astro",
+      "type": "file",
+      "name": "index.astro",
+      "filePath": "src/pages/categories/index.astro",
+      "summary": "分类汇总页面，统计每个分类的文章数量，以双列卡片网格展示全部分类及其描述，每个卡片链接到对应的分类文章列表页。",
+      "tags": [
+        "page",
+        "category",
+        "listing",
+        "index"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:src/pages/index.astro",
+      "type": "file",
+      "name": "index.astro",
+      "filePath": "src/pages/index.astro",
+      "summary": "站点首页，包含 hero 全屏轮播图（HeroSlideshow）、关于我区块（SkillBadges 技能徽章 + GitHubCard 足迹卡片）、博客区块（BlogCalendar 日历 + CategoryFilter 分类筛选 + DateTimeline 按日期分组时间线）。",
+      "tags": [
+        "page",
+        "entry-point",
+        "homepage",
+        "hero",
+        "timeline"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:src/pages/links.astro",
+      "type": "file",
+      "name": "links.astro",
+      "filePath": "src/pages/links.astro",
+      "summary": "外链页面，分为「我的链接」（社交链接）和「友链」两个区块，每个链接展示图标、名称和描述，点击在新标签页打开，末尾提示友链配置文件的路径。",
+      "tags": [
+        "page",
+        "links",
+        "social",
+        "friends"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:src/pages/rss.xml.ts",
+      "type": "file",
+      "name": "rss.xml.ts",
+      "filePath": "src/pages/rss.xml.ts",
+      "summary": "RSS Feed 生成端点，使用 @astrojs/rss 从博客文章集合生成 Atom RSS feed，包含文章标题、发布日期、摘要和链接，支持自定义 language 元数据。",
+      "tags": [
+        "rss",
+        "feed",
+        "api-endpoint",
+        "ssg"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/styles/global.css",
+      "type": "file",
+      "name": "global.css",
+      "filePath": "src/styles/global.css",
+      "summary": "全局样式表，基于 TailwindCSS 4 CSS-based 配置定义樱花粉白色系主题（@theme 变量）、全局排版与背景渐变、樱花花瓣动画、文章排版（prose-blog）、卡片与按钮组件（card-kawaii/btn-kawaii）、首页 hero 轮播、日期时间线、博客日历和 TOC 目录等完整样式体系。",
+      "tags": [
+        "stylesheet",
+        "design-system",
+        "theme",
+        "tailwindcss",
+        "animation"
+      ],
+      "complexity": "complex",
+      "languageNotes": "TailwindCSS 4 使用 CSS-based @theme 配置替代传统的 tailwind.config.* 文件，所有设计令牌（颜色、字体）直接在 CSS 中声明。"
+    },
+    {
+      "id": "file:src/utils/groupPostsByDate.ts",
+      "type": "file",
+      "name": "groupPostsByDate.ts",
+      "filePath": "src/utils/groupPostsByDate.ts",
+      "summary": "文章日期分组工具模块，提供展示日期选取（优先使用更新日）、文章更新检测和按日期分组排序三个核心函数，支持首页时间线组件的日期聚合需求。",
+      "tags": [
+        "utility",
+        "date",
+        "grouping",
+        "sorting"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/pages/rss.xml.ts:GET",
+      "type": "function",
+      "name": "GET",
+      "filePath": "src/pages/rss.xml.ts",
+      "lineRange": [
+        6,
+        24
+      ],
+      "summary": "Astro API 端点处理函数，获取所有非草稿文章，按发布日期倒序排列，使用 @astrojs/rss 生成包含标题、摘要、链接和语言元数据的 RSS feed 响应。",
+      "tags": [
+        "api-handler",
+        "rss",
+        "feed-generation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pages/blog/[...slug].astro:getStaticPaths",
+      "type": "function",
+      "name": "getStaticPaths",
+      "filePath": "src/pages/blog/[...slug].astro",
+      "lineRange": [
+        5,
+        11
+      ],
+      "summary": "Astro 静态路径生成函数，查询博客集合中所有非草稿文章，为每篇文章生成对应的静态路由参数和 props，实现 SSG 全量预渲染。",
+      "tags": [
+        "static-paths",
+        "ssg",
+        "blog"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pages/categories/[category].astro:getStaticPaths",
+      "type": "function",
+      "name": "getStaticPaths",
+      "filePath": "src/pages/categories/[category].astro",
+      "lineRange": [
+        9,
+        13
+      ],
+      "summary": "Astro 静态路径生成函数，遍历 categories 配置数组，为每个分类 slug 生成对应的分类文章列表页静态路由。",
+      "tags": [
+        "static-paths",
+        "ssg",
+        "category"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/utils/groupPostsByDate.ts:groupPostsByDate",
+      "type": "function",
+      "name": "groupPostsByDate",
+      "filePath": "src/utils/groupPostsByDate.ts",
+      "lineRange": [
+        27,
+        53
+      ],
+      "summary": "核心分组函数，使用 Map 按日期键（YYYY-MM-DD）聚合文章，组内按展示日期倒序排列，最终返回按日期倒序的 DateGroup 数组，用于首页时间线渲染。",
+      "tags": [
+        "utility",
+        "grouping",
+        "date",
+        "sorting"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/utils/groupPostsByDate.ts:getPostDisplayDate",
+      "type": "function",
+      "name": "getPostDisplayDate",
+      "filePath": "src/utils/groupPostsByDate.ts",
+      "lineRange": [
+        11,
+        13
+      ],
+      "summary": "文章展示日期选择器，优先返回 updatedDate（有更新时），否则回退到 pubDate（发布日期），统一对外提供展示用日期。",
+      "tags": [
+        "utility",
+        "date",
+        "selector"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/utils/groupPostsByDate.ts:isUpdatedPost",
+      "type": "function",
+      "name": "isUpdatedPost",
+      "filePath": "src/utils/groupPostsByDate.ts",
+      "lineRange": [
+        15,
+        18
+      ],
+      "summary": "文章更新检测函数，比较 updatedDate 和 pubDate 的时间戳，判定文章是否在发布后有过实质性更新。",
+      "tags": [
+        "utility",
+        "date",
+        "detection"
+      ],
+      "complexity": "simple"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:public/admin/js/api.js",
+      "target": "class:public/admin/js/api.js:ApiClient",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:public/admin/js/api.js",
+      "target": "class:public/admin/js/api.js:ApiClient",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:public/admin/js/api.js",
+      "target": "function:public/admin/js/api.js:readFile",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:public/admin/js/api.js",
+      "target": "function:public/admin/js/api.js:writeFile",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:public/admin/js/api.js",
+      "target": "function:public/admin/js/api.js:listDirectory",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:public/admin/js/api.js",
+      "target": "function:public/admin/js/api.js:deleteFile",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:public/admin/js/api.js",
+      "target": "function:public/admin/js/api.js:uploadImage",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:public/admin/js/main.js",
+      "target": "class:public/admin/js/main.js:AdminApp",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:public/admin/js/main.js",
+      "target": "function:public/admin/js/main.js:constructor",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:public/admin/js/main.js",
+      "target": "function:public/admin/js/main.js:init",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:public/admin/js/main.js",
+      "target": "function:public/admin/js/main.js:_onLoginSuccess",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:public/admin/js/main.js",
+      "target": "function:public/admin/js/main.js:_renderShell",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:public/admin/js/main.js",
+      "target": "function:public/admin/js/main.js:switchTab",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:public/admin/js/main.js",
+      "target": "function:public/admin/js/main.js:_logout",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:public/admin/js/modal.js",
+      "target": "class:public/admin/js/modal.js:ModalManager",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:public/admin/js/modal.js",
+      "target": "class:public/admin/js/modal.js:ModalManager",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:public/admin/js/modal.js",
+      "target": "function:public/admin/js/modal.js:confirm",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:public/admin/js/modal.js",
+      "target": "function:public/admin/js/modal.js:alert",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:public/admin/js/sections/image-manager.js",
+      "target": "class:public/admin/js/sections/image-manager.js:ImageManagerSection",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:public/admin/js/sections/image-manager.js",
+      "target": "class:public/admin/js/sections/image-manager.js:ImageManagerSection",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:public/admin/js/sections/image-manager.js",
+      "target": "function:public/admin/js/sections/image-manager.js:render",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:public/admin/js/sections/image-manager.js",
+      "target": "function:public/admin/js/sections/image-manager.js:_load",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:public/admin/js/sections/image-manager.js",
+      "target": "function:public/admin/js/sections/image-manager.js:_render",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:public/admin/js/sections/image-manager.js",
+      "target": "function:public/admin/js/sections/image-manager.js:_renderImageCard",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:public/admin/js/sections/image-manager.js",
+      "target": "function:public/admin/js/sections/image-manager.js:_deleteImage",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:public/admin/js/sections/site-config.js",
+      "target": "class:public/admin/js/sections/site-config.js:SiteConfigSection",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:public/admin/js/sections/site-config.js",
+      "target": "class:public/admin/js/sections/site-config.js:SiteConfigSection",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:public/admin/js/sections/site-config.js",
+      "target": "function:public/admin/js/sections/site-config.js:render",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:public/admin/js/sections/site-config.js",
+      "target": "function:public/admin/js/sections/site-config.js:_load",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:public/admin/js/sections/site-config.js",
+      "target": "function:public/admin/js/sections/site-config.js:_parseObj",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:public/admin/js/sections/site-config.js",
+      "target": "function:public/admin/js/sections/site-config.js:_render",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:public/admin/js/sections/site-config.js",
+      "target": "function:public/admin/js/sections/site-config.js:_readFormValues",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:public/admin/js/sections/site-config.js",
+      "target": "function:public/admin/js/sections/site-config.js:_generateSiteTs",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:public/admin/js/sections/site-config.js",
+      "target": "function:public/admin/js/sections/site-config.js:_save",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:public/admin/js/toast.js",
+      "target": "class:public/admin/js/toast.js:ToastManager",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:public/admin/js/toast.js",
+      "target": "class:public/admin/js/toast.js:ToastManager",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:public/admin/js/toast.js",
+      "target": "function:public/admin/js/toast.js:show",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:public/admin/js/main.js",
+      "target": "file:public/admin/js/api.js",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:public/admin/js/main.js",
+      "target": "file:public/admin/js/auth.js",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:public/admin/js/main.js",
+      "target": "file:public/admin/js/modal.js",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:public/admin/js/main.js",
+      "target": "file:public/admin/js/sections/categories.js",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:public/admin/js/main.js",
+      "target": "file:public/admin/js/sections/hero.js",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:public/admin/js/main.js",
+      "target": "file:public/admin/js/sections/image-manager.js",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:public/admin/js/main.js",
+      "target": "file:public/admin/js/sections/links.js",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:public/admin/js/main.js",
+      "target": "file:public/admin/js/sections/posts.js",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:public/admin/js/main.js",
+      "target": "file:public/admin/js/sections/site-config.js",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:public/admin/js/main.js",
+      "target": "file:public/admin/js/sections/skills.js",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:public/admin/js/main.js",
+      "target": "file:public/admin/js/toast.js",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:public/admin/js/main.js",
+      "target": "file:public/admin/js/utils/dom.js",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:public/admin/js/sections/image-manager.js",
+      "target": "file:public/admin/js/utils/dom.js",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:public/admin/js/sections/site-config.js",
+      "target": "file:public/admin/js/utils/dom.js",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "function:public/admin/js/sections/image-manager.js:_load",
+      "target": "function:public/admin/js/api.js:listDirectory",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:public/admin/js/sections/image-manager.js:_render",
+      "target": "function:public/admin/js/api.js:uploadImage",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:public/admin/js/sections/image-manager.js:_deleteImage",
+      "target": "function:public/admin/js/api.js:deleteFile",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:public/admin/js/sections/site-config.js:_load",
+      "target": "function:public/admin/js/api.js:readFile",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:public/admin/js/sections/site-config.js:_save",
+      "target": "function:public/admin/js/api.js:writeFile",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:public/admin/js/auth.js",
+      "target": "file:public/admin/js/utils/dom.js",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:public/admin/js/sections/categories.js",
+      "target": "file:public/admin/js/utils/dom.js",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:public/admin/js/sections/hero.js",
+      "target": "file:public/admin/js/utils/dom.js",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:public/admin/js/sections/links.js",
+      "target": "file:public/admin/js/utils/dom.js",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:public/admin/js/sections/skills.js",
+      "target": "file:public/admin/js/utils/dom.js",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:public/admin/js/auth.js",
+      "target": "class:public/admin/js/auth.js:AuthManager",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:public/admin/js/sections/categories.js",
+      "target": "class:public/admin/js/sections/categories.js:CategoriesSection",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:public/admin/js/sections/hero.js",
+      "target": "class:public/admin/js/sections/hero.js:HeroSection",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:public/admin/js/sections/links.js",
+      "target": "class:public/admin/js/sections/links.js:LinksSection",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:public/admin/js/sections/skills.js",
+      "target": "class:public/admin/js/sections/skills.js:SkillsSection",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:public/admin/js/utils/dom.js",
+      "target": "function:public/admin/js/utils/dom.js:el",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:public/admin/js/utils/dom.js",
+      "target": "function:public/admin/js/utils/dom.js:formGroup",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:public/admin/js/utils/dom.js",
+      "target": "function:public/admin/js/utils/dom.js:toggle",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:public/admin/js/utils/dom.js",
+      "target": "function:public/admin/js/utils/dom.js:clearContainer",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:public/admin/js/auth.js",
+      "target": "class:public/admin/js/auth.js:AuthManager",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:public/admin/js/sections/categories.js",
+      "target": "class:public/admin/js/sections/categories.js:CategoriesSection",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:public/admin/js/sections/hero.js",
+      "target": "class:public/admin/js/sections/hero.js:HeroSection",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:public/admin/js/sections/links.js",
+      "target": "class:public/admin/js/sections/links.js:LinksSection",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:public/admin/js/sections/skills.js",
+      "target": "class:public/admin/js/sections/skills.js:SkillsSection",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:public/admin/js/utils/dom.js",
+      "target": "function:public/admin/js/utils/dom.js:el",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:public/admin/js/utils/dom.js",
+      "target": "function:public/admin/js/utils/dom.js:formGroup",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:public/admin/js/utils/dom.js",
+      "target": "function:public/admin/js/utils/dom.js:toggle",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:public/admin/js/utils/dom.js",
+      "target": "function:public/admin/js/utils/dom.js:clearContainer",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:public/admin/js/auth.js:AuthManager",
+      "target": "function:public/admin/js/utils/dom.js:el",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:public/admin/js/sections/categories.js:CategoriesSection",
+      "target": "function:public/admin/js/utils/dom.js:el",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:public/admin/js/sections/categories.js:CategoriesSection",
+      "target": "function:public/admin/js/utils/dom.js:clearContainer",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:public/admin/js/sections/categories.js:CategoriesSection",
+      "target": "function:public/admin/js/utils/dom.js:formGroup",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:public/admin/js/sections/hero.js:HeroSection",
+      "target": "function:public/admin/js/utils/dom.js:el",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:public/admin/js/sections/hero.js:HeroSection",
+      "target": "function:public/admin/js/utils/dom.js:clearContainer",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:public/admin/js/sections/hero.js:HeroSection",
+      "target": "function:public/admin/js/utils/dom.js:formGroup",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:public/admin/js/sections/links.js:LinksSection",
+      "target": "function:public/admin/js/utils/dom.js:el",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:public/admin/js/sections/links.js:LinksSection",
+      "target": "function:public/admin/js/utils/dom.js:clearContainer",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:public/admin/js/sections/links.js:LinksSection",
+      "target": "function:public/admin/js/utils/dom.js:formGroup",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:public/admin/js/sections/skills.js:SkillsSection",
+      "target": "function:public/admin/js/utils/dom.js:el",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:public/admin/js/sections/skills.js:SkillsSection",
+      "target": "function:public/admin/js/utils/dom.js:clearContainer",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "pipeline:.github/workflows/deploy.yml",
+      "target": "step:.github/workflows/deploy.yml:build",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "pipeline:.github/workflows/deploy.yml",
+      "target": "step:.github/workflows/deploy.yml:deploy",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "document:README.md",
+      "target": "file:src/config/site.ts",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:README.md",
+      "target": "file:src/config/links.ts",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:README.md",
+      "target": "file:src/config/categories.ts",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:README.md",
+      "target": "file:src/config/skills.ts",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:README.md",
+      "target": "file:src/config/hero.ts",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:README.md",
+      "target": "file:src/pages/about.astro",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:README.md",
+      "target": "file:src/styles/global.css",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:deploy.ps1",
+      "target": "pipeline:.github/workflows/deploy.yml",
+      "type": "triggers",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "document:src/content/blog/2026-05-29-my-new-post1.md",
+      "target": "document:src/content/blog/2026-05-29-my-new-post2.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:src/content/blog/07-数据结构笔记整理.md",
+      "target": "document:src/content/blog/算法专题.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:src/content/blog/07-数据结构笔记整理.md",
+      "target": "document:src/content/blog/2026-06-07-java-basic-syntax.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:src/content/blog/07-数据结构笔记整理.md",
+      "target": "document:src/content/blog/Python基础语法.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:src/content/blog/算法专题.md",
+      "target": "document:src/content/blog/Python基础语法.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:src/content/blog/算法专题.md",
+      "target": "document:src/content/blog/2026-06-12-面向对象设计原则入门：srp、ocp-与-dip.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:src/content/blog/2026-06-13-langchain-学习记录（day-1）：从-prompt-到-ai-应用框架.md",
+      "target": "document:src/content/blog/2026-06-14-langchain-学习记录（day-2）：chain-与-runnable，从单次调用到-ai-工作流.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:src/content/blog/2026-06-13-langchain-学习记录（day-1）：从-prompt-到-ai-应用框架.md",
+      "target": "document:src/content/blog/机器学习、深度学习和大模型之间的关系.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:src/content/blog/2026-06-14-langchain-学习记录（day-2）：chain-与-runnable，从单次调用到-ai-工作流.md",
+      "target": "document:src/content/blog/机器学习、深度学习和大模型之间的关系.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:src/content/blog/2026-06-11-transformer、rnn-与-cnn-详解.md",
+      "target": "document:src/content/blog/机器学习、深度学习和大模型之间的关系.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:src/content/blog/2026-06-11-transformer、rnn-与-cnn-详解.md",
+      "target": "document:src/content/blog/2026-06-13-langchain-学习记录（day-1）：从-prompt-到-ai-应用框架.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:src/content/blog/2026-06-04.md",
+      "target": "document:src/content/blog/2026-06-05.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:src/content/blog/2026-06-05.md",
+      "target": "document:src/content/blog/2026-06-06-admin-panel.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:src/content/blog/2026-05-31-blog-writing-guide.md",
+      "target": "document:src/content/blog/how-to-publish.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:src/content/blog/2026-06-06-admin-panel.md",
+      "target": "document:src/content/blog/2026-05-31-blog-writing-guide.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:src/content/blog/2026-06-06-admin-panel.md",
+      "target": "file:public/admin/js/main.js",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:src/content/blog/2026-05-31-blog-writing-guide.md",
+      "target": "file:src/content.config.ts",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:src/content/blog/how-to-publish.md",
+      "target": "file:src/config/site.ts",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:public/admin/js/sections/posts.js",
+      "target": "file:public/admin/js/utils/dom.js",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:public/admin/js/sections/posts.js",
+      "target": "file:public/admin/js/utils/frontmatter.js",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:public/admin/js/sections/posts.js",
+      "target": "class:public/admin/js/sections/posts.js:PostsSection",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:public/admin/js/utils/frontmatter.js",
+      "target": "function:public/admin/js/utils/frontmatter.js:parseFrontmatter",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:public/admin/js/utils/frontmatter.js",
+      "target": "function:public/admin/js/utils/frontmatter.js:generateMarkdown",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:public/admin/js/utils/frontmatter.js",
+      "target": "function:public/admin/js/utils/frontmatter.js:sanitizeFilename",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:public/admin/js/utils/frontmatter.js",
+      "target": "function:public/admin/js/utils/frontmatter.js:parseFrontmatter",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:public/admin/js/utils/frontmatter.js",
+      "target": "function:public/admin/js/utils/frontmatter.js:generateMarkdown",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:public/admin/js/utils/frontmatter.js",
+      "target": "function:public/admin/js/utils/frontmatter.js:sanitizeFilename",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:public/admin/js/sections/posts.js:PostsSection",
+      "target": "function:public/admin/js/utils/frontmatter.js:parseFrontmatter",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:public/admin/js/sections/posts.js:PostsSection",
+      "target": "function:public/admin/js/utils/frontmatter.js:generateMarkdown",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/layouts/BaseLayout.astro",
+      "target": "file:src/components/Header.astro",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:src/layouts/BaseLayout.astro",
+      "target": "file:src/components/Footer.astro",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:src/layouts/BaseLayout.astro",
+      "target": "file:src/components/SakuraPetals.astro",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:src/layouts/BaseLayout.astro",
+      "target": "file:src/config/site.ts",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:src/components/Header.astro",
+      "target": "file:src/config/site.ts",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:src/components/Header.astro",
+      "target": "file:src/components/SiteAvatar.astro",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:src/components/Footer.astro",
+      "target": "file:src/config/site.ts",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:src/components/Giscus.astro",
+      "target": "file:src/config/site.ts",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:src/components/GitHubCard.astro",
+      "target": "file:src/config/site.ts",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:src/components/HeroSlideshow.astro",
+      "target": "file:src/config/hero.ts",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:src/components/HeroSlideshow.astro",
+      "target": "file:src/config/site.ts",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:src/components/SiteAvatar.astro",
+      "target": "file:src/config/site.ts",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:src/components/SkillBadges.astro",
+      "target": "file:src/config/skills.ts",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:src/components/CategoryFilter.astro",
+      "target": "file:src/config/categories.ts",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:astro.config.mjs",
+      "target": "file:src/layouts/BaseLayout.astro",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:src/content.config.ts",
+      "target": "file:src/layouts/BaseLayout.astro",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:public/admin/admin.css",
+      "target": "file:public/admin/js/sections/posts.js",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:src/components/BlogCalendar.astro",
+      "target": "file:src/components/CategoryFilter.astro",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:src/components/PostCard.astro",
+      "target": "file:src/components/DateTimeline.astro",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:src/components/Header.astro",
+      "target": "file:src/components/Footer.astro",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:src/pages/rss.xml.ts",
+      "target": "file:src/config/site.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pages/rss.xml.ts",
+      "target": "function:src/pages/rss.xml.ts:GET",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:src/pages/blog/[...slug].astro",
+      "target": "function:src/pages/blog/[...slug].astro:getStaticPaths",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:src/pages/categories/[category].astro",
+      "target": "function:src/pages/categories/[category].astro:getStaticPaths",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:src/utils/groupPostsByDate.ts",
+      "target": "function:src/utils/groupPostsByDate.ts:groupPostsByDate",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:src/utils/groupPostsByDate.ts",
+      "target": "function:src/utils/groupPostsByDate.ts:getPostDisplayDate",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:src/utils/groupPostsByDate.ts",
+      "target": "function:src/utils/groupPostsByDate.ts:isUpdatedPost",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:src/pages/rss.xml.ts",
+      "target": "function:src/pages/rss.xml.ts:GET",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pages/blog/[...slug].astro",
+      "target": "function:src/pages/blog/[...slug].astro:getStaticPaths",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pages/categories/[category].astro",
+      "target": "function:src/pages/categories/[category].astro:getStaticPaths",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/utils/groupPostsByDate.ts",
+      "target": "function:src/utils/groupPostsByDate.ts:groupPostsByDate",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/utils/groupPostsByDate.ts",
+      "target": "function:src/utils/groupPostsByDate.ts:getPostDisplayDate",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/utils/groupPostsByDate.ts",
+      "target": "function:src/utils/groupPostsByDate.ts:isUpdatedPost",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/utils/groupPostsByDate.ts:groupPostsByDate",
+      "target": "function:src/utils/groupPostsByDate.ts:getPostDisplayDate",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pages/blog/index.astro",
+      "target": "function:src/utils/groupPostsByDate.ts:getPostDisplayDate",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:src/pages/index.astro",
+      "target": "file:src/layouts/HomeLayout.astro",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:src/pages/blog/[...slug].astro",
+      "target": "file:src/layouts/PostLayout.astro",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:src/pages/about.astro",
+      "target": "file:src/layouts/BaseLayout.astro",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:src/pages/blog/index.astro",
+      "target": "file:src/layouts/BaseLayout.astro",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:src/pages/categories/index.astro",
+      "target": "file:src/layouts/BaseLayout.astro",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:src/pages/categories/[category].astro",
+      "target": "file:src/layouts/BaseLayout.astro",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:src/pages/links.astro",
+      "target": "file:src/layouts/BaseLayout.astro",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:src/layouts/PostLayout.astro",
+      "target": "file:src/layouts/BaseLayout.astro",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:src/styles/global.css",
+      "target": "file:src/layouts/HomeLayout.astro",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:src/styles/global.css",
+      "target": "file:src/layouts/PostLayout.astro",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:src/pages/blog/index.astro",
+      "target": "file:src/pages/blog/[...slug].astro",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:src/pages/categories/index.astro",
+      "target": "file:src/pages/categories/[category].astro",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:src/pages/admin/index.astro",
+      "target": "file:src/config/site.ts",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:src/pages/about.astro",
+      "target": "file:src/config/site.ts",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:src/pages/links.astro",
+      "target": "file:src/config/site.ts",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:src/pages/links.astro",
+      "target": "file:src/config/links.ts",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:src/pages/categories/[category].astro",
+      "target": "file:src/config/categories.ts",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:src/pages/categories/index.astro",
+      "target": "file:src/config/categories.ts",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:src/pages/index.astro",
+      "target": "file:src/config/categories.ts",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:src/pages/blog/index.astro",
+      "target": "file:src/config/categories.ts",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:src/pages/blog/index.astro",
+      "target": "file:src/config/site.ts",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:src/layouts/HomeLayout.astro",
+      "target": "file:src/config/site.ts",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:src/layouts/PostLayout.astro",
+      "target": "file:src/config/site.ts",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:src/pages/categories/index.astro",
+      "target": "file:src/config/site.ts",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:src/pages/categories/[category].astro",
+      "target": "file:src/config/site.ts",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "document:README.md",
+      "target": "pipeline:.github/workflows/deploy.yml",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:src/components/BlogCalendar.astro",
+      "target": "file:src/utils/groupPostsByDate.ts",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:src/components/DateTimeline.astro",
+      "target": "file:src/utils/groupPostsByDate.ts",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    }
+  ],
+  "layers": [
+    {
+      "id": "layer:pages",
+      "name": "页面路由层",
+      "description": "Astro 页面组件，定义站点的 URL 路由，包含首页、博客列表、文章详情、分类页、关于页、友链页、管理后台入口和 RSS Feed 端点。",
+      "nodeIds": [
+        "file:src/pages/index.astro",
+        "file:src/pages/about.astro",
+        "file:src/pages/links.astro",
+        "file:src/pages/admin/index.astro",
+        "file:src/pages/blog/index.astro",
+        "file:src/pages/blog/[...slug].astro",
+        "file:src/pages/categories/index.astro",
+        "file:src/pages/categories/[category].astro",
+        "file:src/pages/rss.xml.ts"
+      ]
+    },
+    {
+      "id": "layer:components",
+      "name": "组件与布局层",
+      "description": "可复用的 Astro UI 组件（博客日历、分类筛选、日期时间线、文章卡片、首屏轮播、目录导航、Giscus 评论、GitHub 卡片、技能徽章、樱花动画等 13 个组件）与页面布局模板（BaseLayout、PostLayout、HomeLayout），构成博客视图层的完整骨架",
+      "nodeIds": [
+        "file:src/components/BlogCalendar.astro",
+        "file:src/components/CategoryFilter.astro",
+        "file:src/components/DateTimeline.astro",
+        "file:src/components/Footer.astro",
+        "file:src/components/Giscus.astro",
+        "file:src/components/GitHubCard.astro",
+        "file:src/components/Header.astro",
+        "file:src/components/HeroSlideshow.astro",
+        "file:src/components/PostCard.astro",
+        "file:src/components/SakuraPetals.astro",
+        "file:src/components/SiteAvatar.astro",
+        "file:src/components/SkillBadges.astro",
+        "file:src/components/TableOfContents.astro",
+        "file:src/layouts/BaseLayout.astro",
+        "file:src/layouts/HomeLayout.astro",
+        "file:src/layouts/PostLayout.astro"
+      ]
+    },
+    {
+      "id": "layer:config",
+      "name": "配置层",
+      "description": "构建配置（astro.config.mjs、tsconfig.json、package.json）、Content Collection Schema（content.config.ts），以及 5 个站点数据配置文件（site、categories、hero、links、skills），这些文件同时也是管理后台的数据源。",
+      "nodeIds": [
+        "file:src/config/site.ts",
+        "file:src/config/categories.ts",
+        "file:src/config/links.ts",
+        "file:src/config/skills.ts",
+        "file:src/config/hero.ts",
+        "file:src/content.config.ts",
+        "file:astro.config.mjs",
+        "config:package.json",
+        "config:tsconfig.json"
+      ]
+    },
+    {
+      "id": "layer:content",
+      "name": "博客内容层",
+      "description": "Markdown 博客文章 — Astro Content Collection，包含 17 篇文章涵盖 6 个分类：编程学习记录、AI 技术、前端开发、技术架构和设计、教程分享、二次元杂谈。",
+      "nodeIds": [
+        "document:src/content/blog/07-数据结构笔记整理.md",
+        "document:src/content/blog/2026-05-29-my-new-post1.md",
+        "document:src/content/blog/2026-05-29-my-new-post2.md",
+        "document:src/content/blog/2026-05-31-blog-writing-guide.md",
+        "document:src/content/blog/2026-06-04.md",
+        "document:src/content/blog/2026-06-05.md",
+        "document:src/content/blog/2026-06-06-admin-panel.md",
+        "document:src/content/blog/2026-06-06-二次元作品中的一些萌属性.md",
+        "document:src/content/blog/2026-06-07-java-basic-syntax.md",
+        "document:src/content/blog/2026-06-11-transformer、rnn-与-cnn-详解.md",
+        "document:src/content/blog/2026-06-12-面向对象设计原则入门：srp、ocp-与-dip.md",
+        "document:src/content/blog/2026-06-13-langchain-学习记录（day-1）：从-prompt-到-ai-应用框架.md",
+        "document:src/content/blog/2026-06-14-langchain-学习记录（day-2）：chain-与-runnable，从单次调用到-ai-工作流.md",
+        "document:src/content/blog/Python基础语法.md",
+        "document:src/content/blog/how-to-publish.md",
+        "document:src/content/blog/机器学习、深度学习和大模型之间的关系.md",
+        "document:src/content/blog/算法专题.md"
+      ]
+    },
+    {
+      "id": "layer:admin",
+      "name": "管理后台层",
+      "description": "纯前端 SPA 管理后台（零依赖），通过 GitHub Contents API 直接读写仓库文件：API 客户端、登录认证、Modal/Toast UI 组件、7 个业务模块（文章、分类、轮播、友链、技能、站点配置、图片管理）、2 个工具模块（DOM 辅助、Frontmatter 解析）。",
+      "nodeIds": [
+        "file:public/admin/js/main.js",
+        "file:public/admin/js/api.js",
+        "file:public/admin/js/auth.js",
+        "file:public/admin/js/modal.js",
+        "file:public/admin/js/toast.js",
+        "file:public/admin/js/utils/dom.js",
+        "file:public/admin/js/utils/frontmatter.js",
+        "file:public/admin/js/sections/posts.js",
+        "file:public/admin/js/sections/categories.js",
+        "file:public/admin/js/sections/hero.js",
+        "file:public/admin/js/sections/links.js",
+        "file:public/admin/js/sections/skills.js",
+        "file:public/admin/js/sections/site-config.js",
+        "file:public/admin/js/sections/image-manager.js",
+        "file:public/admin/admin.css"
+      ]
+    },
+    {
+      "id": "layer:styles",
+      "name": "样式与工具层",
+      "description": "TailwindCSS 4 CSS-based 主题设计系统（樱花粉白配色方案、@theme 设计令牌、全局排版渐变、卡片/按钮组件样式、樱花花瓣动画关键帧、prose-blog 文章排版）与通用工具函数（文章按展示日期分组排序、更新检测），作为跨层共享的样式基础设施与辅助逻辑",
+      "nodeIds": [
+        "file:src/styles/global.css",
+        "file:src/utils/groupPostsByDate.ts"
+      ]
+    },
+    {
+      "id": "layer:infrastructure",
+      "name": "基础设施层",
+      "description": "GitHub Actions 部署流水线（push main 自动构建部署）、部署 PowerShell 脚本、public/images 占位文件，以及项目 README 文档。",
+      "nodeIds": [
+        "pipeline:.github/workflows/deploy.yml",
+        "file:deploy.ps1",
+        "document:README.md",
+        "file:public/images/.gitkeep"
+      ]
+    }
+  ],
+  "tour": [
+    {
+      "order": 1,
+      "title": "项目概览",
+      "description": "从 README.md 入手，全面了解流光靈の小屋的功能定位、技术栈选型与项目结构。这是一款基于 Astro 6.x + TailwindCSS 4.x 的清新萌系个人博客，涵盖 Markdown 博客写作、在线管理后台、樱花飘落动画、Giscus 评论等 12 项特性，部署至 GitHub Pages。此文档为后续代码探索提供了完整的上下文地图。",
+      "nodeIds": [
+        "document:README.md"
+      ]
+    },
+    {
+      "order": 2,
+      "title": "应用入口：首页",
+      "description": "首页是整个博客的起点和门面。`src/pages/index.astro` 组合了 HeroSlideshow 全屏轮播、SkillBadges 技能徽章、GitHubCard 足迹卡片、BlogCalendar 日历和 DateTimeline 时间线五大模块，通过 HomeLayout 渲染完整页面。理解首页的数据流和组件编排方式，就能掌握整个前端的骨架逻辑。",
+      "nodeIds": [
+        "file:src/pages/index.astro"
+      ],
+      "languageLesson": "Astro 的 .astro 文件是一种单文件组件格式，顶部的 `---` 围栏区运行服务端 JavaScript（构建时执行），下部为 HTML 模板。`Astro.props` 接收组件属性，`<slot />` 为子内容占位，这使得 Astro 能以零 JS 运行时成本输出纯静态 HTML。"
+    },
+    {
+      "order": 3,
+      "title": "布局骨架",
+      "description": "三个布局组件构成了博客页面的视觉框架。BaseLayout 是全局基础（HTML5 骨架、SEO meta 标签、全局样式引入），组合了 Header、Footer 和 SakuraPetals 三件套；HomeLayout 专为首页设计，提供 hero 轮播和博客内容的双插槽；PostLayout 继承 BaseLayout，为文章页添加封面大图、TOC 侧边栏和 Giscus 评论区。它们之间形成 `PostLayout -> BaseLayout` 的继承链，体现了 DRY 原则。",
+      "nodeIds": [
+        "file:src/layouts/BaseLayout.astro",
+        "file:src/layouts/HomeLayout.astro",
+        "file:src/layouts/PostLayout.astro"
+      ],
+      "languageLesson": "Astro 的布局组件通过 `<slot />` 机制实现内容注入——页面组件将内容传入布局的 slot，布局负责统一的 HTML 外壳。这种「布局包裹内容」的模式是 SSG（静态站点生成）框架的经典范式，等价于传统服务端渲染中的模板继承。"
+    },
+    {
+      "order": 4,
+      "title": "配置数据中心",
+      "description": "`src/config/` 下的五个 TypeScript 文件是整个博客的数据中枢。`site.ts`（fan-in=18，全项目最高）定义了站名、作者、Giscus 评论等全局常量，被几乎所有组件和页面引用；`categories.ts`（fan-in=6）定义 7 大分类；`hero.ts`、`links.ts`、`skills.ts` 分别驱动首页轮播、友链页和技能徽章。这些配置文件同时也是 Step 11 管理后台的读写目标——后台通过 GitHub API 直接修改它们，实现了「配置即代码」的 headless CMS 模式。",
+      "nodeIds": [
+        "file:src/config/site.ts",
+        "file:src/config/categories.ts",
+        "file:src/config/hero.ts",
+        "file:src/config/links.ts",
+        "file:src/config/skills.ts"
+      ],
+      "languageLesson": "TypeScript 中，通过 `export const` 导出的对象字面量在构建时被 Astro 内联为静态值——这意味着修改配置后需要重新构建才能生效。这种模式牺牲了运行时灵活性，但换来了零运行时开销和类型安全。管理后台通过 GitHub API 写回源文件再触发 CI 重新部署，巧妙地弥补了这一限制。"
+    },
+    {
+      "order": 5,
+      "title": "内容体系：Schema 与文章",
+      "description": "`content.config.ts` 使用 Astro Content Collections API + Zod 定义了 blog 集合的 Schema：标题、描述、日期、分类、草稿、封面图六个字段，通过 glob 加载器匹配 `src/content/blog/*.md`。博客写作指南（blog-writing-guide.md）则从作者视角说明了 Frontmatter 的格式规范、常见错误和图片插入方法。Schema 定义 + 写作规范两者构成了内容生产的完整约束体系。",
+      "nodeIds": [
+        "file:src/content.config.ts",
+        "document:src/content/blog/2026-05-31-blog-writing-guide.md"
+      ],
+      "languageLesson": "Astro Content Collections 将 Markdown 文件组织为类型安全的集合。Zod schema 在构建时对每篇文章的 Frontmatter 进行校验——若 `pubDate` 格式错误或缺少必填字段，构建会直接失败。这相当于为博客内容引入了一套「编译时类型检查」，避免了运行时才发现元数据错误的问题。"
+    },
+    {
+      "order": 6,
+      "title": "核心视觉组件",
+      "description": "这五个组件构成了博客的视觉面孔。Header 提供导航栏（支持首页透明/内页粘性两种模式），Footer 展示版权与链接，HeroSlideshow 驱动首页全屏轮播（从 hero.ts 读取配置），SakuraPetals 用纯 CSS 实现 6 片樱花花瓣的飘落动画，PostCard 渲染文章摘要卡片（日期、分类标签、封面缩略图、悬停动效）。所有组件都从 `site.ts` 读取站点全局信息，体现了配置驱动的设计理念。",
+      "nodeIds": [
+        "file:src/components/Header.astro",
+        "file:src/components/Footer.astro",
+        "file:src/components/HeroSlideshow.astro",
+        "file:src/components/SakuraPetals.astro",
+        "file:src/components/PostCard.astro"
+      ],
+      "languageLesson": "Astro 组件默认在服务端渲染为静态 HTML，客户端零 JS 开销。SakuraPetals 的樱花动画完全通过 CSS `@keyframes` 实现，无需任何 JavaScript——这正是 Astro 「零 JS 默认」哲学的体现。只有需要交互的组件（如 HeroSlideshow 的轮播计时器）才会在 `<script>` 标签中添加少量客户端 JS。"
+    },
+    {
+      "order": 7,
+      "title": "交互功能组件",
+      "description": "这五个组件赋予博客动态交互能力。BlogCalendar 以月视图日历展示文章分布，支持月份切换和日期筛选；CategoryFilter 展示分类卡片网格，点击筛选文章列表，并与日历筛选形成 AND 联动；DateTimeline 按日期分组展示文章时间线，区分「发布」与「更新」状态；TableOfContents 从文章标题自动生成层级目录，利用 IntersectionObserver 实现滚动高亮；Giscus 通过懒加载集成 GitHub Discussions 评论系统。它们共同实现了「日历 + 分类 + 时间线 + 目录 + 评论」的完整博客浏览体验。",
+      "nodeIds": [
+        "file:src/components/BlogCalendar.astro",
+        "file:src/components/CategoryFilter.astro",
+        "file:src/components/DateTimeline.astro",
+        "file:src/components/TableOfContents.astro",
+        "file:src/components/Giscus.astro"
+      ],
+      "languageLesson": "BlogCalendar 和 CategoryFilter 在服务端完成首屏渲染（SSR），然后通过客户端 `<script>` 接管交互——这是 Astro 的「岛屿架构」模式。Giscus 的 IntersectionObserver 懒加载则确保评论脚本仅在用户滚动到评论区时才加载，这是性能优化的经典实践：延迟加载非关键第三方资源。"
+    },
+    {
+      "order": 8,
+      "title": "路由页面",
+      "description": "博客共有 6 个页面路由和 1 个 RSS 端点。博客列表页（blog/index）集成日历和分类筛选；文章详情页（blog/[...slug]）通过 `getStaticPaths` 为每篇文章预生成静态路径，将 Markdown 渲染为 HTML 并提取标题传递给 PostLayout；分类汇总页（categories/index）和分类文章页（categories/[category]）构成二级分类路由；关于页展示博主信息；友链页展示社交链接与友情链接；RSS 端点使用 `@astrojs/rss` 生成 Atom Feed。所有页面共享 BaseLayout 统一了视觉框架。",
+      "nodeIds": [
+        "file:src/pages/blog/index.astro",
+        "file:src/pages/blog/[...slug].astro",
+        "file:src/pages/categories/index.astro",
+        "file:src/pages/about.astro",
+        "file:src/pages/links.astro"
+      ],
+      "languageLesson": "Astro 的文件系统路由将 `src/pages/` 下的文件结构直接映射为 URL 路径。`[...slug].astro` 中的 `...` 表示「剩余参数」（rest parameter），匹配任意深度的路径段。`getStaticPaths()` 在构建时返回所有可能的参数组合，Astro 为每一组参数生成一个静态 HTML 文件——这就是 SSG 的「预渲染」机制。"
+    },
+    {
+      "order": 9,
+      "title": "全局样式系统",
+      "description": "`global.css` 是整个博客的视觉根基。它基于 TailwindCSS 4 的 CSS-based 配置方式，使用 `@theme` 指令定义樱花粉白色系的完整设计令牌（色彩、间距、字体）；同时包含 `@keyframes petal-fall` 樱花动画、`.prose-blog` 文章排版样式、`.card-kawaii`/`.btn-kawaii` 萌系卡片按钮组件类、以及首页 hero 轮播、日期时间线、博客日历、TOC 目录等全部组件的样式定义。一处修改即可影响全站视觉。",
+      "nodeIds": [
+        "file:src/styles/global.css"
+      ],
+      "languageLesson": "TailwindCSS 4 取消了传统的 `tailwind.config.js` 文件，改用 CSS 原生的 `@theme` 块来定义设计令牌。所有令牌自动生成为 Tailwind 的原子类——例如 `@theme { --color-sakura: #ffb7c5; }` 后即可使用 `bg-sakura`、`text-sakura` 等工具类。这种方式将配置和样式统一在 CSS 文件中，减少了跨文件跳转的心智负担。"
+    },
+    {
+      "order": 10,
+      "title": "管理后台架构",
+      "description": "管理后台是一个纯前端 SPA，零外部依赖。`src/pages/admin/index.astro` 作为 Astro 页面入口，从 `site.ts` 解析仓库 owner/repo 信息，通过 `data-*` 属性注入 DOM，加载 `admin.css` 样式并引入模块化 JS 应用。`main.js`（fan-out=19，全项目最高）是 SPA 核心——导入 10 个子模块，管理标签页路由和登录流程；`api.js` 封装 GitHub Contents API（读/写/删/列表/上传），使用 ES2022 私有字段保护 Token；`auth.js` 处理 Token 登录验证；`dom.js`（fan-in=9）提供元素创建、表单组构建等基础 DOM 工具，被所有业务模块共享。",
+      "nodeIds": [
+        "file:src/pages/admin/index.astro",
+        "file:public/admin/js/main.js",
+        "file:public/admin/js/api.js",
+        "file:public/admin/js/auth.js",
+        "file:public/admin/js/utils/dom.js"
+      ],
+      "languageLesson": "GitHub Contents API 允许通过 REST 接口直接读写仓库文件——`PUT /repos/{owner}/{repo}/contents/{path}` 创建/更新文件，需要提供 Base64 编码的内容和 commit message。管理后台利用这一能力实现了「浏览器内的 CMS」：无需后端服务器，所有数据变更直接写入 Git 仓库，通过 GitHub Actions 触发生成新版本。这是一种极低运维成本的 headless CMS 方案。"
+    },
+    {
+      "order": 11,
+      "title": "管理后台核心模块",
+      "description": "四个业务模块覆盖了博客最核心的管理需求。PostsSection（posts.js）是最复杂的模块——文章列表展示、Markdown 编辑器（含 Frontmatter 表单和实时预览）、封面图拖拽上传、编辑器内图片粘贴/拖拽上传；frontmatter.js 负责 YAML Frontmatter 的解析与生成（parseFrontmatter / generateMarkdown），并提供了安全文件名生成函数；SiteConfigSection（site-config.js）解析 `site.ts` 的 TypeScript 源码，渲染为可编辑表单，修改后重新生成 TS 代码写回仓库；ImageManager（image-manager.js）管理 covers 和 posts 两个图片目录的浏览、上传和删除。",
+      "nodeIds": [
+        "file:public/admin/js/sections/posts.js",
+        "file:public/admin/js/utils/frontmatter.js",
+        "file:public/admin/js/sections/site-config.js",
+        "file:public/admin/js/sections/image-manager.js"
+      ],
+      "languageLesson": "site-config.js 的核心技巧是「TypeScript 源码解析与重新生成」——由于 `site.ts` 使用 `export const` 导出对象字面量，模块先用正则匹配提取对象内容，解析为表单，用户编辑后再按 TypeScript 语法重新拼接为完整的 `.ts` 文件。关键注意事项：所有用户输入值必须做 `_escape()` 转义（处理单引号），否则含 `'` 的内容会导致生成的代码语法错误。"
+    },
+    {
+      "order": 12,
+      "title": "构建与部署流水线",
+      "description": "三个文件构成了从源码到上线的完整链路。`astro.config.mjs` 配置 Astro 构建参数——集成 TailwindCSS Vite 插件、MDX、Sitemap，设定站点 URL 和路径尾部斜杠策略；`package.json` 声明 Node.js >=22.12.0 要求，定义 dev/build/preview 三个 npm 脚本和全部依赖（Astro 6.x、TailwindCSS 4.x、MDX、RSS、Sitemap）；`.github/workflows/deploy.yml` 在 push main 时触发 GitHub Actions，依次执行 `npm ci` → `npm run build` → 上传 `dist/` 到 GitHub Pages Artifact → 部署到 `liuguangling158.github.io`。一条 `git push` 即可完成全自动发布。",
+      "nodeIds": [
+        "file:astro.config.mjs",
+        "config:package.json",
+        "pipeline:.github/workflows/deploy.yml"
+      ],
+      "languageLesson": "GitHub Actions 工作流通过 `on.push.branches: [main]` 监听 push 事件触发。Build job 使用 `actions/configure-pages` 自动检测 Astro 项目并设置正确的构建参数，Deploy job 利用 `actions/deploy-pages` 将 artifact 部署到 GitHub Pages 环境——两者之间通过 `needs: build` 确保串行执行，通过 `permissions.pages: write` 和 `id-token: write` 授权部署操作。整个流程从 push 到上线通常不超过 2 分钟。"
+    }
+  ]
+}

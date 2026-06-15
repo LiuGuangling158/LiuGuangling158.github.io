@@ -16,6 +16,7 @@ const nav = [
   { href: '/categories/', label: '分类' },
   { href: '/links/', label: '外链' },
   { href: '/about/', label: '关于' },
+  { href: site.dashboardUrl, label: '🏗️ 网站架构', external: true },
 ];
 
 const current = Astro.url.pathname;
@@ -46,14 +47,18 @@ const current = Astro.url.pathname;
     </a>
     <nav class="flex flex-wrap items-center gap-1 sm:gap-2" aria-label="主导航">
       {
-        nav.map(({ href, label }) => {
-          const active =
-            href === '/'
+        nav.map(({ href, label, external }) => {
+          const isExternal = external === true;
+          const active = isExternal
+            ? false
+            : href === '/'
               ? current === '/'
               : current.startsWith(href);
           return (
             <a
               href={href}
+              target={isExternal ? '_blank' : undefined}
+              rel={isExternal ? 'noopener noreferrer' : undefined}
               class:list={[
                 'rounded-full px-3 py-1.5 text-sm font-medium transition',
                 active
