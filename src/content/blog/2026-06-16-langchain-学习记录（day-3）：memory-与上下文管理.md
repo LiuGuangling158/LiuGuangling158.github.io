@@ -5,6 +5,7 @@ pubDate: 2026-06-16
 category: AI技术
 ---
 
+
 # LangChain 学习记录（Day 3）
 
 ## 学习目标
@@ -666,3 +667,6 @@ Memory = AI拥有记忆
 * Embedding
 * Vector Store
 * RAG 基础架构
+
+
+![笔记图片](/images/posts/2026-06-16-rd0tfj.png)
