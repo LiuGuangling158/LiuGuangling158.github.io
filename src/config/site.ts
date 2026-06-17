@@ -10,8 +10,8 @@ export const site = {
   url: 'https://liuguangling158.github.io',
   locale: 'zh-CN',
   github: 'https://github.com/liuguangling158',
-  /** 站点架构知识图谱仪表盘（本地开发环境） */
-  dashboardUrl: 'http://127.0.0.1:5173/?token=618f22ab477b5fdb3cc74e2533df1cd5',
+  /** 站点架构知识图谱仪表盘 */
+  dashboardUrl: 'https://liuguangling158.github.io/architecture/',
 } as const;
 
 /** 在 https://giscus.app/zh-CN 生成后填入；留空则评论区显示配置提示 */
