@@ -6,6 +6,7 @@ category: AI技术
 ---
 
 
+
 # LangChain 学习记录（Day 4）
 
 ## 今天学了什么
@@ -463,3 +464,5 @@ FAISS
 然后做一个能够回答博客内容的 AI 助手。
 
 如果能实现的话，应该会是学习 LangChain 以来第一个比较完整的项目。
+
+![笔记图片](/images/posts/2026-06-17-2tjzio.png)
