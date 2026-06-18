@@ -12,7 +12,6 @@ export const skills: string[] = [
   'Redis',
   'Vue3',
   'TypeScript',
-  'Git',
   'Nginx',
   'Agent 调用',
   'HTML',
@@ -20,4 +19,7 @@ export const skills: string[] = [
   'JavaScript',
   'Astro',
   'Python',
+  'LangChain',
+  'LangGraph',
+  'Git项目管理'
 ];
