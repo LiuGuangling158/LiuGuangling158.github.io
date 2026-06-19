@@ -2,7 +2,9 @@
 title: AI API Dashboard项目实施计划
 description: 一个用于监控 AI API 使用情况的桌面工具。
 pubDate: 2026-06-19
+category: 技术架构和设计
 ---
+
 
 # AI API Dashboard
 
