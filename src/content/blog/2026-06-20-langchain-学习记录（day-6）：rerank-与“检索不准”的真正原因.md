@@ -2,7 +2,9 @@
 title: LangChain 学习记录（Day 6）：Rerank 与“检索不准”的真正原因
 description: 在基础 RAG 之后，开始解决实际问题：为什么检索到了但回答不对，以及 Rerank 在系统中的作用
 pubDate: 2026-06-20
+category: AI技术
 ---
+
 
 # LangChain 学习记录（Day 6）
 
