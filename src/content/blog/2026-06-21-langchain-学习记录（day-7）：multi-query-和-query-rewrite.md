@@ -2,7 +2,9 @@
 title: LangChain 学习记录（Day 7）：Multi-Query 和 Query Rewrite
 description: 解决“问题问法不一样导致搜不到”的问题
 pubDate: 2026-06-21
+category: AI技术
 ---
+
 
 
 # LangChain 学习记录（Day 7）
