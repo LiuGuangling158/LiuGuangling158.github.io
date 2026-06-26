@@ -2,9 +2,9 @@
 title: LangChain 学习记录（Day 8）：第一个完整 RAG 项目
 description: 把前面几天的零散模块串成一个完整 RAG 系统，并开始按“项目标准”整理结构
 pubDate: 2026-06-23
-updatedDate: 2026-06-25
 category: AI技术
 ---
+
 
 # LearnLoop-AI 学习记录（Day 8）— RAG 检索链路系统化
 
