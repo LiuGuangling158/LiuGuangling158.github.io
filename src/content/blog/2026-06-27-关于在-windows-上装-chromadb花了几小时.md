@@ -1,8 +1,10 @@
 ---
 title: 关于在 Windows 上装 ChromaDB花了几小时
+description: '`chroma-hnswlib` 编译失败，版本选择比想象重要'
 pubDate: 2026-06-27
 category: 踩坑日志
 ---
+
 
 # 在 Windows 上装 ChromaDB，花了我一个下午
 
