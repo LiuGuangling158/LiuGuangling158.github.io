@@ -1,7 +1,10 @@
 ---
 title: SQLAlchemy 的 session 关闭后，对象属性就变鬼了
+description: '笔记保存成功了，但后面只要访问 `note` 对象的任何属性，就抛异常'
 pubDate: 2026-06-28
+category: 踩坑日志
 ---
+
 
 # SQLAlchemy 的 session 关闭后，对象属性就变鬼了
 
@@ -53,16 +56,4 @@ self._SessionLocal = sessionmaker(
 
 ## 反思
 
-ORM 的"魔法"很多时候是双刃剑。`expire_on_commit` 默认 `True` 是有道理的——在长时间运行的 Web 应用中，commit 后继续持有对象确实可能读到脏数据。但在我这种短生命周期的请求处理场景里，commit 完马上就要序列化返回，这反而是多余的防御。
-
-**什么时候该关掉它：**
-- 请求-响应模式，session 生命周期很短
-- commit 后立即需要序列化对象返回
-- 不需要"刷新到最新状态"
-
-**什么时候不该关：**
-- 长时间持有 session
-- 多进程/多线程同时操作同一行数据
-- 需要乐观锁的场景
-
-这个 bug 让我 debug 了好久，因为异常信息里完全没提 `expire_on_commit`。
+ORM 的"魔法"很多时候是双刃剑。`expire_on_commit` 默认 `True` 是有道理的——在长时间运行的 We
