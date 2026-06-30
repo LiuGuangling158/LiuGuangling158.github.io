@@ -2,7 +2,9 @@
 title: 'Embedding 三级降级：从"有 Key 才工作"到"怎么都能跑"'
 description: 这个项目的 Embedding 方案，经历的三次迭代
 pubDate: 2026-06-30
+category: 踩坑日志
 ---
+
 
 Embedding 三级降级：从"有 Key 才工作"到"怎么都能跑"
 
