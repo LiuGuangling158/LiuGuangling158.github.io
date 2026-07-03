@@ -2,7 +2,9 @@
 title: RAG 效果不好和Prompt有直接关系
 description: 同样的检索结果，换一个 Prompt，回答质量天差地别。
 pubDate: 2026-07-03
+category: 踩坑日志
 ---
+
 
 # RAG 效果不好？Prompt 的影响可能更大
 
