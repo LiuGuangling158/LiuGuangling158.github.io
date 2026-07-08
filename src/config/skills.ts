@@ -13,7 +13,6 @@ export const skills: string[] = [
   'Vue3',
   'TypeScript',
   'Nginx',
-  'Agent 调用',
   'HTML',
   'CSS',
   'JavaScript',
