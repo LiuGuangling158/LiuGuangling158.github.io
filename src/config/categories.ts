@@ -18,7 +18,7 @@ export const categories: Category[] = [
   {
     slug: '技术架构和设计',
     name: '技术架构和设计',
-    description: '系统架构设计与技术选型方案，产品需求文档与功能设计方案',
+    description: '系统架构设计与技术选型方案以及产品需求文档与功能设计方案',
   },
   {
     slug: '编程学习记录',
