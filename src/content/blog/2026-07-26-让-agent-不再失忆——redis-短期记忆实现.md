@@ -1,8 +1,10 @@
 ---
 title: '让 Agent 不再"失忆"——Redis 短期记忆实现'
+description: 短期记忆、Redis 会话管理、消息持久化、双层记忆
 pubDate: 2026-07-26
 category: AI技术
 ---
+
 
 # 让 Agent 不再"失忆"——Redis 短期记忆实现
 
