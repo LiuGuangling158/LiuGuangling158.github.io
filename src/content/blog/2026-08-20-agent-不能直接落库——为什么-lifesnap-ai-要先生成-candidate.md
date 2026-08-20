@@ -2,7 +2,9 @@
 title: Agent 不能直接落库——为什么 LifeSnap AI 要先生成 Candidate
 description: LifeSnap AI Agent 踩坑日志：Agent、候选记录、用户确认、误操作防护、账单解析、待办解析
 pubDate: 2026-08-20
+category: 踩坑日志
 ---
+
 
 # Agent 不能直接落库——为什么 LifeSnap AI 要先生成 Candidate
 
