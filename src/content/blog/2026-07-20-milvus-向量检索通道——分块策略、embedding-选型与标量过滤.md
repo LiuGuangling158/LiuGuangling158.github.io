@@ -1,8 +1,10 @@
 ---
 title: Milvus 向量检索通道——分块策略、Embedding 选型与标量过滤
+description: Milvus、文档分块、Embedding、DashScope、标量过滤、Collection Schema
 pubDate: 2026-07-20
 category: AI技术
 ---
+
 
 # Milvus 向量检索通道——分块策略、Embedding 选型与标量过滤
 
