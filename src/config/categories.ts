@@ -36,11 +36,6 @@ export const categories: Category[] = [
     description: '关于AI的学习记录',
   },
   {
-    slug: '二次元杂谈',
-    name: '二次元杂谈',
-    description: '关于动漫，galgame，小说，漫画的随笔杂谈',
-  },
-  {
     slug: '踩坑日志',
     name: '踩坑日志',
     description: '记录学习中遇到过的一些问题和解决方法',
