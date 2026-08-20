@@ -1,8 +1,10 @@
 ---
 title: ContextBuilder 与链式调用容错设计——上游挂了，下游怎么办
+description: ContextBuilder、链式调用、容错、中间进度、SSE 推送
 pubDate: 2026-07-16
 category: AI技术
 ---
+
 
 # ContextBuilder 与链式调用容错设计——上游挂了，下游怎么办？
 
