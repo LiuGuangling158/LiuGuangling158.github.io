@@ -10,15 +10,12 @@ export const skills: string[] = [
   'Spring Boot',
   'MySQL',
   'Redis',
-  'Vue3',
-  'TypeScript',
-  'Nginx',
   'HTML',
   'CSS',
   'JavaScript',
-  'Astro',
   'Python',
   'LangChain',
   'LangGraph',
-  'Git项目管理'
+  'Git项目管理',
+  'FastAPI'
 ];
